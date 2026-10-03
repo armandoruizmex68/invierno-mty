@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<!-- ARCHIVO GENERADO por app/construir.py desde la plantilla + nucleo_modelo.js + mapa.js. No editar index.html: edita la plantilla o el núcleo y corre `make build`. -->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Microclima ZMM — tiempo e invierno 2026-27 por zona</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --urban:#d3dad7; --road:#8a9692;
+  --bg:#e8eeec; --panel:#f7f9f8; --ink:#16232c; --muted:#56656b; --line:#c5d0cd;
+  --sierra:#7d8f87; --sierra2:#a9b8b1; --river:#6c9cc0; --accent:#e2a12b; --cold:#2d6ea3; --warm:#c45a2c;
+  --sel:#16232c; --field:#ffffff; --warnbg:#fdf3df;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
+  --bg:#131b20; --panel:#1b252b; --ink:#e3ebe8; --muted:#9aaaa8; --line:#33434a;
+  --sierra:#4c5f58; --sierra2:#38494a; --river:#3f6f92; --accent:#efb547; --cold:#6aa8dc; --warm:#e0805a; --sel:#e3ebe8; --field:#131b20; --warnbg:#3a3020; --urban:#26333a; --road:#6d7c80;
+}}
+:root[data-theme="dark"]{
+  --urban:#26333a; --road:#6d7c80;
+  --bg:#131b20; --panel:#1b252b; --ink:#e3ebe8; --muted:#9aaaa8; --line:#33434a;
+  --sierra:#4c5f58; --sierra2:#38494a; --river:#3f6f92; --accent:#efb547; --cold:#6aa8dc; --warm:#e0805a; --sel:#e3ebe8; --field:#131b20; --warnbg:#3a3020;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 "Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3,.num{font-family:"Barlow Condensed","Arial Narrow",Arial,sans-serif;letter-spacing:.01em}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 16px 40px}
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:14px}
+header.top h1{font-size:clamp(28px,5vw,46px);line-height:1;margin:0;font-weight:700}
+header.top p{margin:6px 0 0;color:var(--muted);max-width:60ch}
+.grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:18px}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px}
+svg.map{width:100%;height:auto;display:block;touch-action:manipulation}
+.map text{font-family:"Source Sans 3",sans-serif}
+.map .pt{cursor:pointer}
+.map .pt:focus{outline:none}
+.map .pt:focus-visible circle.dot{stroke:var(--accent);stroke-width:4}
+.mapbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0 8px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.seg button{background:transparent;color:var(--ink);border-radius:0;min-height:34px;padding:6px 10px;font-weight:600}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--panel)}
+button.pick[aria-pressed=true]{background:var(--accent);color:#1b1b1b;border-color:var(--accent)}
+.mapwrap{position:relative;border-radius:4px;overflow:hidden;background:var(--bg)}
+.mapwrap.picking svg{cursor:crosshair}
+.map .mun{transition:fill-opacity .15s}
+.map .mun:hover{fill-opacity:.55}
+@media (prefers-reduced-motion:reduce){.map .mun{transition:none}}
+.legend{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-top:8px;flex-wrap:wrap}
+.legend .bar{height:10px;width:150px;border-radius:2px;background:linear-gradient(90deg,#2d6ea3,#8fc0de,#f1e3a6,#e59a4d,#c45a2c)}
+select,input,button{font:inherit;color:var(--ink)}
+select,input[type=number],input[type=date]{background:var(--field);border:1px solid var(--line);border-radius:4px;padding:6px 8px;min-height:38px}
+input[type=number]{width:5.4em}
+input[aria-invalid=true]{border-color:var(--warm);outline:2px solid var(--warm)}
+button{cursor:pointer;background:var(--ink);color:var(--panel);border:0;border-radius:4px;padding:8px 12px;font-weight:600;min-height:38px}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+button:disabled{opacity:.45;cursor:default}
+button.link{background:none;border:0;color:var(--muted);text-decoration:underline;padding:0;min-height:0;font-weight:400}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.zonehead h2{font-size:clamp(28px,4vw,36px);line-height:1.05;margin:0}
+.zonehead .meta{color:var(--muted);font-size:14px;margin-top:2px}
+.home-tag{display:inline-block;background:var(--accent);color:#1b1b1b;font-family:"Source Sans 3",sans-serif;font-weight:700;font-size:12px;letter-spacing:0;padding:1px 7px;border-radius:3px;vertical-align:middle;margin-left:8px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+@media (max-width:420px){.stats{grid-template-columns:1fr 1fr}.stats .stat:last-child{grid-column:1/-1}}
+.stat{border-left:3px solid var(--line);padding-left:10px}
+.stat .num{font-size:32px;font-weight:600;line-height:1}
+.stat .lbl{font-size:13px;color:var(--muted)}
+.stat.cold{border-color:var(--cold)} .stat.warm{border-color:var(--warm)} .stat.rain{border-color:var(--river)}
+.vs{font-size:14px;margin:0 0 10px;padding:8px 10px;border-radius:4px;background:var(--bg)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:20px 0 12px;overflow-x:auto}
+.tabs button{background:none;color:var(--muted);border-radius:0;padding:8px 12px;border-bottom:3px solid transparent;white-space:nowrap}
+.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent)}
+.scroll{overflow-x:auto;position:relative}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap;vertical-align:middle}
+th:first-child,td:first-child{text-align:left}
+th{font-weight:600;color:var(--muted);font-size:13px}
+th.grp{text-align:center;color:var(--ink);border-bottom:2px solid var(--line)}
+th.grp.res{border-bottom-color:var(--accent)}
+td.res{background:color-mix(in srgb,var(--accent) 7%,transparent)}
+.out{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-size:20px;font-weight:600}
+.out.cold{color:var(--cold)}
+.small{font-size:13px;color:var(--muted)}
+.note{font-size:14px;color:var(--muted);max-width:75ch}
+.warn{background:var(--warnbg);border-left:3px solid var(--accent);padding:8px 10px;font-size:14px;margin:8px 0;border-radius:3px}
+/* tabla de días: tarjetas en móvil */
+@media (max-width:760px){
+  #daysTbl thead{display:none}
+  #daysTbl tr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 10px;padding:10px 0;border-bottom:1px solid var(--line)}
+  #daysTbl td{border:0;padding:0;text-align:left;display:flex;flex-direction:column;gap:2px}
+  #daysTbl td::before{content:attr(data-l);font-size:12px;color:var(--muted)}
+  #daysTbl td.wide{grid-column:1/-1}
+  #daysTbl td.res{background:var(--bg);padding:6px 8px;border-radius:4px}
+  #daysTbl input[type=number],#daysTbl select{width:100%;min-width:0}
+  #daysTbl td.res{background:var(--bg)}
+}
+.prob{display:grid;grid-template-columns:8em 1fr 3.4em;gap:8px;align-items:center;font-size:14px;margin:6px 0}
+.prob .track{height:10px;background:var(--bg);border:1px solid var(--line);border-radius:2px;overflow:hidden}
+.prob .fill{height:100%;background:var(--cold)}
+.tri{display:flex;height:28px;border-radius:3px;overflow:hidden;font-size:12px;font-weight:600;margin:6px 0}
+.tri div{display:flex;align-items:center;justify-content:center;color:#fff;white-space:nowrap;overflow:hidden}
+.rank .row{display:grid;grid-template-columns:minmax(8em,15em) 1fr 4.4em 4.6em;gap:8px;align-items:center;font-size:14px;padding:4px;border-radius:3px;cursor:pointer}
+.rank .row:hover{background:var(--bg)}
+.rank .row.on{outline:1px solid var(--accent)}
+.rank .row.hd{cursor:default;color:var(--muted);font-size:12px}
+.rank .row.hd:hover{background:none}
+.rank .b{height:12px;border-radius:2px}
+.rank .d{color:var(--muted);text-align:right}
+@media (max-width:560px){.rank .row{grid-template-columns:minmax(7em,1fr) 1fr 4.2em}.rank .d{display:none}}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:8px 0}
+.controls label{font-size:14px;color:var(--muted)}
+.method h3{font-size:22px;margin:16px 0 4px}
+.method p,.method li{max-width:78ch}
+.method table{max-width:620px}
+.method th,.method td{white-space:normal}
+svg.chart{width:100%;height:auto;display:block;margin-top:6px}
+.chart text{font-family:"Source Sans 3",sans-serif;font-size:12px;fill:var(--muted)}
+footer{margin-top:22px;font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between}
+@media (max-width:560px){ #winTbl .small{display:block;line-height:1.1} #winTbl th,#winTbl td{padding:6px 5px} }
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:0 0 16px}
+@media (max-width:760px){.facts{grid-template-columns:1fr}}
+.fact{border-top:3px solid var(--ink);padding-top:6px}
+.fact b{display:block;font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-size:24px;line-height:1.1}
+.fact span{font-size:13px;color:var(--muted)}
+.fact.n{border-color:#b0281e}.fact.f{border-color:var(--cold)}.fact.t{border-color:var(--accent)}
+.hist text{font-family:"Source Sans 3",sans-serif;font-size:11px;fill:var(--muted)}
+.keyrow{display:flex;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--muted);margin:4px 0 8px}
+.keyrow i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.sr{position:absolute;left:0;top:0;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Microclima de la Zona Metropolitana de Monterrey</h1>
+      <p>Lleva el pronóstico oficial de Monterrey a cada municipio y zona, y estima el invierno 2026-27 donde vives, con un modelo calibrado con estaciones oficiales y 113 inviernos de datos.</p>
+    </div>
+    <div class="controls">
+      <label for="zsel">Zona</label>
+      <select id="zsel"></select>
+      <button class="ghost" id="homeBtn" type="button">Ir a Monterrey centro</button>
+    </div>
+  </header>
+
+  <div class="facts" aria-label="Contexto del invierno 2026-27">
+    <div class="fact n"><b>El Niño muy fuerte</b><span>Índice ONI de +1.8 °C en junio-agosto, el más alto registrado para esa época; pico esperado en diciembre.</span></div>
+    <div class="fact f"><b>56 frentes fríos</b><span>Pronóstico del SMN para la temporada, 6 más que el promedio; 9 en diciembre.</span></div>
+    <div class="fact t"><b>0.3 °C más fresco</b><span>Temperatura media dic-feb esperada frente a la normal; 62 % de probabilidad de un invierno más fresco.</span></div>
+  </div>
+
+  <div class="grid">
+    <section class="panel" aria-label="Mapa de la zona metropolitana">
+      <div class="controls" style="margin-top:0">
+        <label for="mapMetric">Colorear por</label>
+        <select id="mapMetric">
+          <option value="ext">Noche más fría probable del invierno</option>
+          <option value="frost">Probabilidad de helada (0 °C)</option>
+          <option value="tminJan">Mínima media de enero</option>
+          <option value="tmaxJan">Máxima media de enero</option>
+          <option value="rain">Lluvia dic-feb pronosticada</option>
+          <option value="day">Mínima del primer día de la tabla</option>
+        </select>
+        <label style="display:inline-flex;gap:6px;align-items:center"><input type="checkbox" id="showVals" checked> Valores en el mapa</label>
+      </div>
+      <div class="mapbar">
+        <div class="seg" role="group" aria-label="Vista del mapa">
+          <button type="button" id="vAll" aria-pressed="true">Toda la ZMM</button>
+          <button type="button" id="vCore" aria-pressed="false">Centro urbano</button>
+        </div>
+        <button type="button" class="ghost pick" id="pickHome" hidden style="display:none" aria-pressed="false">Marcar ubicación</button>
+      </div>
+      <div class="mapwrap" id="mapwrap">
+        <svg class="map" id="map" viewBox="0 0 640 642" role="group" aria-label="Mapa de la ZMM con límites municipales; cada punto es una zona"></svg>
+      </div>
+      <div class="legend"><span id="legLo"></span><span class="bar" aria-hidden="true"></span><span id="legHi"></span><span id="legTxt"></span></div>
+      <p class="small" id="mapNote">Cada indicador usa una escala fija, así los colores significan lo mismo siempre. «Noche más fría» y «helada» miden el mismo riesgo en unidades distintas, por eso ordenan las zonas igual; la mínima y la máxima de enero muestran patrones diferentes. Límites municipales oficiales (INEGI); relieve, río y carreteras con trazo aproximado.</p>
+    </section>
+
+    <section class="panel" aria-live="polite">
+      <div class="zonehead">
+        <h2 id="zName"></h2>
+        <div class="meta" id="zMeta"></div>
+      </div>
+      <div class="stats" id="zStats"></div>
+      <p class="vs" id="zVs"></p>
+      <div class="controls">
+        <label for="elevIn">Altitud (m)</label>
+        <input type="number" id="elevIn" min="200" max="2500" step="10" inputmode="numeric" aria-describedby="elevMsg">
+        <label for="terrIn">Terreno</label>
+        <select id="terrIn">
+          <option value="llanura">Llanura urbana</option>
+          <option value="ladera">Ladera o pie de cerro</option>
+          <option value="valle">Valle, cañón o cauce (acumula aire frío)</option>
+          <option value="periferia">Periferia abierta, poco urbanizada</option>
+        </select>
+        <button class="ghost" id="resetZ" type="button">Restablecer zona</button>
+      </div>
+      <p class="small" id="elevMsg" role="status"></p>
+      <p class="small" id="zNote"></p>
+    </section>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Secciones">
+    <button role="tab" id="t-days" aria-controls="tab-days" aria-selected="true" tabindex="0" data-tab="days">Próximos días</button>
+    <button role="tab" id="t-winter" aria-controls="tab-winter" aria-selected="false" tabindex="-1" data-tab="winter">Invierno 2026-27</button>
+    <button role="tab" id="t-hist" aria-controls="tab-hist" aria-selected="false" tabindex="-1" data-tab="hist">100 años de inviernos</button>
+    <button role="tab" id="t-compare" aria-controls="tab-compare" aria-selected="false" tabindex="-1" data-tab="compare">Comparar zonas</button>
+    <button role="tab" id="t-method" aria-controls="tab-method" aria-selected="false" tabindex="-1" data-tab="method">Cómo se calcula</button>
+  </div>
+
+  <section id="tab-days" class="panel" role="tabpanel" aria-labelledby="t-days">
+    <p class="note">Escribe el pronóstico oficial para la ciudad de Monterrey (SMN, Protección Civil o tu fuente de confianza) y la app lo ajusta a la zona elegida. Indica cómo estará el cielo de noche: despejado y en calma agranda las diferencias entre zonas.</p>
+    <div id="staleMsg"></div>
+    <div class="scroll"><table id="daysTbl"></table></div>
+    <div class="controls"><button type="button" id="addDay">Agregar día</button><button type="button" class="ghost" id="resetDays">Volver al pronóstico de ejemplo</button></div>
+    <p class="small">El pronóstico de ejemplo es el publicado el 1 de octubre de 2026 por medios locales con base en el SMN; la lluvia en mm es una estimación según la intensidad descrita.</p>
+  </section>
+
+  <section id="tab-winter" class="panel" role="tabpanel" aria-labelledby="t-winter" hidden>
+    <div class="grid">
+      <div>
+        <h3 class="num" style="font-size:24px;margin:0 0 6px">Mes a mes en esta zona</h3>
+        <div class="scroll"><table id="winTbl"></table></div>
+        <svg class="chart" id="winChart" viewBox="0 0 520 220" role="img"></svg>
+        <p class="small" style="margin:2px 0 8px"><span style="color:var(--warm)">■</span> máxima, <span style="color:var(--cold)">■</span> mínima: línea continua es el pronóstico, punteada la normal. Barras: lluvia pronosticada; la raya marca la normal.</p>
+        <p class="small">Entre paréntesis, la normal 1991-2020 ajustada a la zona. El pronóstico parte de 113 inviernos de datos: El Niño baja sobre todo las máximas (más nubes) y acerca las mínimas de las distintas zonas entre sí. Frentes fríos: pronóstico nacional del SMN.</p>
+      </div>
+      <div>
+        <h3 class="num" style="font-size:24px;margin:0 0 6px">¿Qué tanto frío puede hacer?</h3>
+        <div id="coldProbs"></div>
+        <h3 class="num" style="font-size:24px;margin:16px 0 6px">¿Cuánto va a llover? (dic-feb)</h3>
+        <div id="rainBox"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-hist" class="panel" role="tabpanel" aria-labelledby="t-hist" hidden>
+    <h3 class="num" style="font-size:24px;margin:0 0 4px">Temperatura de cada invierno en Monterrey, 1901-2013</h3>
+    <p class="note">Diferencia de la temperatura media de diciembre a febrero contra el promedio 1961-1990. Cada barra es un invierno, coloreada según El Niño en ese momento. Datos: Berkeley Earth (serie mensual de Monterrey) y NOAA (índice ONI desde 1950).</p>
+    <div class="keyrow"><span><i style="background:#b0281e"></i>El Niño fuerte</span><span><i style="background:#e07b4c"></i>El Niño</span><span><i style="background:#c9c2a6"></i>Neutral</span><span><i style="background:#3d78b0"></i>La Niña</span><span><i style="background:#9aa7a4"></i>Antes de 1950</span><span><i style="background:var(--ink);height:3px"></i>Tendencia</span><span><i style="background:var(--accent);border-radius:50%"></i>Pronóstico 2026-27 (barra: 8 de cada 10 escenarios)</span></div>
+    <svg class="chart hist" id="histBars" viewBox="0 0 720 250" role="img" aria-label="Anomalías de temperatura invernal de 1901 a 2013"></svg>
+    <div class="grid" style="margin-top:14px">
+      <div>
+        <h3 class="num" style="font-size:22px;margin:0 0 4px">El Niño enfría el invierno</h3>
+        <svg class="chart hist" id="histScatter" viewBox="0 0 420 300" role="img" aria-label="Relación entre el índice de El Niño y la temperatura invernal"></svg>
+      </div>
+      <div>
+        <h3 class="num" style="font-size:22px;margin:0 0 4px">Lo que muestran los datos</h3>
+        <ul class="note" style="padding-left:18px;margin:0">
+          <li>Cada grado del índice ONI baja la temperatura media del invierno <b>0.56 °C</b> (64 inviernos, r = −0.45, p = 0.0002).</li>
+          <li>De los 10 inviernos más fríos desde 1951, <b>6 fueron con El Niño</b>; lo esperado por azar eran 3 (p = 0.04).</li>
+          <li>Desde 1971 los inviernos se calientan unos <b>0.4 °C por década</b> (Mann-Kendall p = 0.03).</li>
+          <li>Para 2026-27 ambos efectos se contrarrestan: tendencia de +1.0 °C y El Niño de −1.35 °C, resultado <b>−0.3 °C</b> frente a la normal.</li>
+          <li>No todo El Niño fuerte es frío: 1998 fue templado. Por eso el pronóstico es una probabilidad, no una certeza.</li>
+          <li>Las heladas récord de un solo día (1983, 1989, 2011, 2021) llegaron en fases neutras o La Niña, con aire ártico seco.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-compare" class="panel" role="tabpanel" aria-labelledby="t-compare" hidden>
+    <div class="controls">
+      <label for="cmpMetric">Ordenar zonas por</label>
+      <select id="cmpMetric">
+        <option value="ext">Noche más fría probable del invierno</option>
+        <option value="frost">Probabilidad de helada</option>
+        <option value="rain">Lluvia dic-feb</option>
+        <option value="tminJan">Mínima media de enero</option>
+        <option value="tmaxJan">Máxima media de enero</option>
+      </select>
+    </div>
+    <div class="rank" id="rank"></div>
+  </section>
+
+  <section id="tab-method" class="panel method" role="tabpanel" aria-labelledby="t-method" hidden>
+    <h3>De dónde salen los números</h3>
+    <p>La base es la estación oficial de Monterrey (OMM 76393, SMN 19049): normales 1991-2020 y extremos desde 1929. Cada zona se ajusta a partir de ahí distinguiendo dos tipos de noche:</p>
+    <ul>
+      <li><b>Noche con frente frío, viento o nublado.</b> El aire se enfría unos 6 °C por cada 1 000 m de altura y la isla de calor urbana pesa poco.</li>
+      <li><b>Noche despejada y en calma.</b> El suelo pierde calor hacia el cielo y el aire frío escurre a las partes bajas: la isla de calor del centro llega a varios grados y el terreno cuenta.</li>
+    </ul>
+    <p>Los coeficientes se calibraron con las estaciones del SMN en Apodaca y Santiago (normales 1951-2010), corrigiendo antes el calentamiento entre periodos (+0.58 °C, obtenido de la serie histórica). El modelo reproduce sus mínimas de invierno con error de ±0.6 °C. El hallazgo principal: en noches de invierno el centro es hasta 4-5 °C más templado que la periferia abierta.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Factor</th><th>Noche con frente o nublado</th><th>Noche despejada</th><th>Máxima</th></tr></thead>
+      <tbody>
+        <tr><td>Altura (por 100 m sobre 540 m)</td><td>−0.60 °C</td><td>−0.30 °C</td><td>−0.65 °C</td></tr>
+        <tr><td>Urbanización (índice 0 a 1, centro = 0.85)</td><td>4 °C por unidad</td><td>12 °C por unidad</td><td>−1.3 °C por unidad</td></tr>
+        <tr><td>Cercanía a la Sierra Madre (0 a 1)</td><td>0</td><td>0</td><td>−3.0 °C por unidad</td></tr>
+        <tr><td>Valle, cañón o cauce</td><td>0</td><td>−1.0 °C</td><td>0</td></tr>
+        <tr><td>Ladera (cinturón térmico)</td><td>0</td><td>+0.5 °C</td><td>0</td></tr>
+        <tr><td>Periferia abierta</td><td>0</td><td>−1.0 °C</td><td>0</td></tr>
+      </tbody>
+    </table></div>
+    <p>Para combinar ambos tipos de noche se usa la proporción de noches despejadas: 45 % en un invierno normal y 35 % con El Niño. Para la noche más fría del invierno se usa 15 %, porque los récords de frío en Monterrey llegan con aire ártico, viento y nubes, no en calma.</p>
+    <p><b>Lluvia.</b> En invierno la lluvia es casi uniforme en la ZMM (Santiago recibe 94 % de la del centro y Apodaca 82 %), aunque en verano Santiago recibe 62 % más. Por eso cada zona tiene un factor de lluvia de invierno y otro anual; la tabla de próximos días usa el anual.</p>
+    <h3>El invierno 2026-27</h3>
+    <p><b>Temperatura:</b> regresión de 64 inviernos (1951-2013) entre el índice ONI y la temperatura invernal sin tendencia, más la tendencia de calentamiento extrapolada a 2027, simulada 200 000 veces con un ONI esperado de +2.4 ± 0.3 °C. <b>Lluvia:</b> distribución Gamma con mezcla de escenarios (80 % respuesta típica de El Niño, 20 % climatológica). <b>Frío extremo:</b> distribución Gumbel calibrada con la mínima media anual (1.1 °C) y el récord (−7.5 °C).</p>
+    <h3>Límites</h3>
+    <p>La serie histórica es regional y mensual; no permite contar heladas. El modelo de zonas se calibró con dos estaciones, y las ubicaciones del mapa son aproximadas. La lluvia invernal no se calculó con una serie local. Un pronóstico estacional da probabilidades; un solo frente ártico puede definir el invierno. Para alertas, sigue al SMN y a Protección Civil de Nuevo León.</p>
+    <h3>Fuentes</h3>
+    <p class="small">Berkeley Earth, temperaturas por ciudad (Monterrey, 1825-2013); NOAA CPC, índice ONI (1950-2026) y discusión ENSO del 10 sep 2026; IRI Columbia, sep 2026; SMN, normales 1951-2010 de Apodaca, Santiago y Santa Catarina; NOAA NCEI, normales 1991-2020 de Monterrey; SMN, pronóstico de frentes fríos 2026-27; Magaña (ed.), Los impactos de El Niño en México, UNAM (1999); Atmósfera 30(3), 2017.</p>
+  </section>
+
+  <footer><span>Versión 3 del modelo, emitida el 2 de octubre de 2026. Revisa las actualizaciones de NOAA (8 oct y 19 nov de 2026) y los avisos del SMN.</span><span><a href="https://claude.ai/artifact/AU4dGMK7ory8eKRPtmAJyy" target="_blank" rel="noopener" style="color:var(--cold);font-weight:600">Versión para celular</a> · <button class="link" type="button" id="resetAll">Borrar todos mis ajustes</button></span></footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ================= Parámetros del modelo ================= */
+var REF = {elev:540, uhi:0.85};
+var BETA = 2.1377, MU = -2.3339;                       // Gumbel de -Tmin absoluta (estación Monterrey)
+var W_CLIM = 0.45, W_NINO = 0.35, W_EXT = 0.15;         // peso de noches despejadas (normal, El Niño, noche más fría)
+// Coeficientes calibrados con estaciones SMN Apodaca (19004) y Santiago (19069), 1951-2010
+var K = {radLapse:-3.0, advLapse:-6.0, radUhi:12.0, advUhi:4.0, txLapse:-6.5, txUhi:-1.3, txSierra:-3.0};
+var TERR = {llanura:0, ladera:0.5, valle:-1.0, periferia:-1.0};
+var TERR_TXT = {llanura:"llanura urbana", ladera:"ladera o pie de cerro", valle:"valle, cañón o cauce", periferia:"periferia abierta"};
+var HOME = "mty";
+
+var ZONES = [{"id": "siete", "n": "Siete Colinas", "m": "Guadalupe", "g": "Zonas", "e": 430, "u": 0.75, "t": "llanura", "s": 0.0, "fA": 0.95, "fW": 0.9, "lat": 25.7, "lon": -100.232, "lx": 13, "ly": -6, "la": "start", "note": "Fraccionamiento en Guadalupe, a 430 m de altitud. Su posición en el mapa es aproximada."}, {"id": "mty", "n": "Monterrey centro", "m": "Monterrey", "g": "Centros municipales", "e": 540, "u": 0.85, "t": "llanura", "s": 0.0, "fA": 1.0, "fW": 1.0, "lat": 25.669, "lon": -100.31, "lx": -10, "ly": -6, "la": "end", "ln": "Monterrey", "note": "Es la referencia: aquí está la estación oficial, dentro de la isla de calor urbana."}, {"id": "gpe", "n": "Guadalupe centro", "m": "Guadalupe", "g": "Centros municipales", "e": 500, "u": 0.8, "t": "llanura", "s": 0.0, "fA": 0.97, "fW": 0.95, "lat": 25.677, "lon": -100.256, "lx": -11, "ly": 4, "la": "end", "ln": "Guadalupe"}, {"id": "snic", "n": "San Nicolás centro", "m": "San Nicolás de los Garza", "g": "Centros municipales", "e": 510, "u": 0.8, "t": "llanura", "s": 0.0, "fA": 0.92, "fW": 0.88, "lat": 25.744, "lon": -100.302, "lx": 10, "ly": 10, "la": "start", "ln": "San Nicolás"}, {"id": "apo", "n": "Apodaca centro", "m": "Apodaca", "g": "Centros municipales", "e": 420, "u": 0.6, "t": "llanura", "s": 0.0, "fA": 0.88, "fW": 0.82, "lat": 25.781, "lon": -100.188, "note": "Calibrado con la estación SMN de Apodaca: en 1951-2010 sus mínimas de invierno eran 4.6 °C más bajas que las del centro."}, {"id": "esc", "n": "Escobedo centro", "m": "General Escobedo", "g": "Centros municipales", "e": 480, "u": 0.6, "t": "periferia", "s": 0.0, "fA": 0.8, "fW": 0.8, "lat": 25.797, "lon": -100.333, "lx": 10, "ly": -4, "la": "start", "ln": "Escobedo"}, {"id": "stac", "n": "Santa Catarina centro", "m": "Santa Catarina", "g": "Centros municipales", "e": 680, "u": 0.65, "t": "valle", "s": 0.2, "fA": 0.6, "fW": 0.75, "lat": 25.673, "lon": -100.458, "lx": -11, "ly": 4, "la": "end", "ln": "Santa Catarina", "note": "Recibe el aire frío que baja del cañón de La Huasteca; el poniente es la zona más seca."}, {"id": "spgg", "n": "San Pedro centro", "m": "San Pedro Garza García", "g": "Centros municipales", "e": 640, "u": 0.75, "t": "ladera", "s": 0.3, "fA": 0.95, "fW": 0.95, "lat": 25.657, "lon": -100.402, "lx": -11, "ly": 0, "la": "end", "ln": "San Pedro"}, {"id": "gar", "n": "García centro", "m": "García", "g": "Centros municipales", "e": 720, "u": 0.45, "t": "periferia", "s": 0.2, "fA": 0.55, "fW": 0.7, "lat": 25.814, "lon": -100.585, "note": "Zona más seca y de noches más frías de la ZMM."}, {"id": "jua", "n": "Juárez centro", "m": "Juárez", "g": "Centros municipales", "e": 400, "u": 0.5, "t": "valle", "s": 0.2, "fA": 1.05, "fW": 0.9, "lat": 25.648, "lon": -100.095, "lx": 10, "ly": 14, "la": "start", "ln": "Juárez"}, {"id": "stgo", "n": "Santiago centro", "m": "Santiago", "g": "Centros municipales", "e": 445, "u": 0.35, "t": "valle", "s": 1.0, "fA": 1.62, "fW": 0.94, "lat": 25.425, "lon": -100.152, "note": "Calibrado con la estación SMN de Santiago: mínimas de invierno 3.5 °C más bajas y máximas 1.7 °C más bajas que el centro. Llueve mucho más en verano, pero casi igual en invierno."}, {"id": "cad", "n": "Cadereyta centro", "m": "Cadereyta Jiménez", "g": "Centros municipales", "e": 345, "u": 0.45, "t": "periferia", "s": 0.0, "fA": 0.95, "fW": 0.85, "lat": 25.588, "lon": -99.995}, {"id": "sal", "n": "Salinas Victoria centro", "m": "Salinas Victoria", "g": "Centros municipales", "e": 390, "u": 0.35, "t": "periferia", "s": 0.0, "fA": 0.75, "fW": 0.75, "lat": 25.962, "lon": -100.293}, {"id": "silla", "n": "Faldas del Cerro de la Silla", "m": "Guadalupe / Juárez", "g": "Zonas", "e": 620, "u": 0.6, "t": "ladera", "s": 0.5, "fA": 1.2, "fW": 1.0, "lat": 25.64, "lon": -100.24, "lx": -12, "ly": 14, "la": "end", "ln": "Faldas de la Silla", "note": "Colinas de la Silla y alrededores. El cerro fuerza el ascenso del aire húmedo: más neblina y días más frescos."}, {"id": "norte", "n": "Monterrey norte", "m": "Monterrey", "g": "Zonas", "e": 560, "u": 0.75, "t": "llanura", "s": 0.0, "fA": 0.85, "fW": 0.85, "lat": 25.75, "lon": -100.352, "lx": -10, "ly": 14, "la": "end", "ln": "Monterrey norte", "note": "San Bernabé, Topo Chico y alrededores."}, {"id": "cumbres", "n": "Cumbres y poniente", "m": "Monterrey", "g": "Zonas", "e": 620, "u": 0.7, "t": "valle", "s": 0.3, "fA": 0.75, "fW": 0.8, "lat": 25.727, "lon": -100.398, "lx": 10, "ly": 5, "la": "start", "ln": "Cumbres", "note": "Al pie del Cerro de las Mitras; el aire frío que baja del cerro enfría las noches despejadas."}, {"id": "vo", "n": "Valle Oriente", "m": "San Pedro / Monterrey", "g": "Zonas", "e": 620, "u": 0.8, "t": "ladera", "s": 0.3, "fA": 1.0, "fW": 0.95, "lat": 25.64, "lon": -100.355, "lx": -11, "ly": 8, "la": "end", "ln": "Valle Oriente"}, {"id": "med", "n": "Mederos y Contry", "m": "Monterrey", "g": "Zonas", "e": 600, "u": 0.7, "t": "ladera", "s": 0.4, "fA": 1.15, "fW": 1.0, "lat": 25.608, "lon": -100.29, "lx": -11, "ly": 12, "la": "end", "ln": "Mederos y Contry"}, {"id": "cnac", "n": "Carretera Nacional", "m": "Monterrey (sur)", "g": "Zonas", "e": 720, "u": 0.45, "t": "ladera", "s": 0.8, "fA": 1.35, "fW": 0.95, "lat": 25.56, "lon": -100.248, "lx": 11, "ly": 5, "la": "start", "ln": "Carretera Nacional", "note": "El Uro, Los Cristales, La Estanzuela. Más altura y cercanía a la Sierra: días más frescos y noches frías."}];
+var BYID = {}; ZONES.forEach(function(z){ BYID[z.id]=z; z.e0=z.e; z.t0=z.t; z.u0=z.u; z.lat0=z.lat; z.lon0=z.lon; });
+
+var MONTHS = [
+ {m:"Nov",txn:24.5,tnn:13.9,pn:30.0,tx:24.1,tn:14.0,p:45,ff:8},
+ {m:"Dic",txn:21.8,tnn:10.5,pn:22.5,tx:21.1,tn:10.6,p:35,ff:9},
+ {m:"Ene",txn:22.4,tnn:10.0,pn:21.8,tx:21.6,tn:10.1,p:31,ff:8},
+ {m:"Feb",txn:23.9,tnn:12.0,pn:27.3,tx:23.2,tn:12.1,p:35,ff:7},
+ {m:"Mar",txn:27.7,tnn:15.1,pn:29.1,tx:27.4,tn:15.1,p:35,ff:6}
+];
+var TFC = {mean:-0.33, p10:-1.76, p90:1.10, pBelow:0.62};   // temperatura media DJF vs normal reciente
+var FC27 = {mean:0.78, p10:-0.71, p90:2.27};
+var HIST = {"y": [1901, 1902, 1903, 1904, 1905, 1906, 1907, 1908, 1909, 1910, 1911, 1912, 1913, 1914, 1915, 1916, 1917, 1918, 1919, 1920, 1921, 1922, 1923, 1924, 1925, 1926, 1927, 1928, 1929, 1930, 1931, 1932, 1933, 1934, 1935, 1936, 1937, 1938, 1939, 1940, 1941, 1942, 1943, 1944, 1945, 1946, 1947, 1948, 1949, 1950, 1951, 1952, 1953, 1954, 1955, 1956, 1957, 1958, 1959, 1960, 1961, 1962, 1963, 1964, 1965, 1966, 1967, 1968, 1969, 1970, 1971, 1972, 1973, 1974, 1975, 1976, 1977, 1978, 1979, 1980, 1981, 1982, 1983, 1984, 1985, 1986, 1987, 1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013], "a": [-0.48, -0.45, -0.4, 0.26, -1.54, -1.27, 2.93, 1.18, 2.01, -0.12, 2.38, -0.81, -0.48, 0.87, -0.98, 2.57, 1.61, 0.3, -0.55, 0.08, 1.67, 1.91, 1.96, -0.9, 0.94, -0.77, 2.34, -0.64, 0.2, 0.26, -0.62, 2.34, 1.1, 1.98, 1.56, 0.06, 1.65, 1.27, 1.17, -0.08, 0.86, -0.12, 1.24, 0.54, 0.58, 0.12, -0.79, -0.15, 1.04, 3.85, 0.88, 3.18, 1.32, 1.27, 0.84, 1.24, 2.85, -0.29, -0.78, -0.01, -1.31, 1.38, -0.78, -1.53, 0.79, -1.14, -0.05, -1.11, 1.17, -0.46, 2.97, 1.97, -1.38, 0.99, 0.63, 0.81, -1.71, -1.06, -0.85, 0.53, -0.29, 0.68, -0.33, -1.55, -0.09, 0.82, -0.62, -0.33, 1.29, 0.55, 0.68, 0.37, 1.11, 1.35, 1.92, 1.3, 0.27, 1.69, 2.67, 2.73, -0.09, 0.7, 0.14, 0.61, 1.06, 1.84, -0.38, 2.46, 2.32, -1.28, 0.92, 1.0, 2.22], "t": [-0.1, -0.06, -0.02, 0.02, 0.06, 0.09, 0.13, 0.16, 0.2, 0.24, 0.27, 0.31, 0.34, 0.38, 0.41, 0.45, 0.48, 0.52, 0.55, 0.59, 0.62, 0.65, 0.67, 0.69, 0.71, 0.72, 0.73, 0.73, 0.74, 0.74, 0.74, 0.74, 0.73, 0.73, 0.73, 0.74, 0.75, 0.76, 0.77, 0.78, 0.79, 0.8, 0.8, 0.8, 0.79, 0.77, 0.75, 0.71, 0.68, 0.64, 0.59, 0.56, 0.52, 0.49, 0.46, 0.44, 0.42, 0.41, 0.39, 0.37, 0.35, 0.32, 0.29, 0.26, 0.22, 0.18, 0.14, 0.1, 0.06, 0.03, 0.0, -0.01, -0.02, -0.02, -0.01, 0.01, 0.03, 0.06, 0.09, 0.13, 0.17, 0.21, 0.25, 0.29, 0.33, 0.37, 0.41, 0.45, 0.49, 0.53, 0.58, 0.62, 0.66, 0.71, 0.75, 0.79, 0.84, 0.88, 0.93, 0.98, 1.02, 1.07, 1.11, 1.15, 1.2, 1.24, 1.28, 1.32, 1.36, 1.4, 1.44, 1.47, 1.51], "r": [-0.38, -0.39, -0.38, 0.24, -1.59, -1.36, 2.8, 1.01, 1.81, -0.35, 2.11, -1.12, -0.82, 0.49, -1.39, 2.13, 1.13, -0.22, -1.1, -0.51, 1.05, 1.26, 1.29, -1.59, 0.24, -1.49, 1.61, -1.38, -0.54, -0.48, -1.36, 1.6, 0.37, 1.25, 0.83, -0.68, 0.9, 0.51, 0.4, -0.86, 0.06, -0.92, 0.44, -0.26, -0.21, -0.66, -1.54, -0.87, 0.36, 3.21, 0.29, 2.62, 0.8, 0.78, 0.38, 0.8, 2.42, -0.69, -1.17, -0.38, -1.66, 1.06, -1.07, -1.79, 0.57, -1.32, -0.19, -1.21, 1.11, -0.49, 2.97, 1.98, -1.36, 1.01, 0.64, 0.8, -1.74, -1.12, -0.94, 0.4, -0.46, 0.47, -0.58, -1.84, -0.42, 0.45, -1.02, -0.78, 0.8, 0.02, 0.1, -0.25, 0.44, 0.65, 1.17, 0.51, -0.57, 0.8, 1.74, 1.76, -1.11, -0.36, -0.97, -0.54, -0.14, 0.6, -1.66, 1.14, 0.97, -2.68, -0.52, -0.47, 0.71], "o": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, -1.32, -0.66, 0.52, 0.25, 0.41, -0.5, -1.17, -0.27, 1.69, 0.6, 0.02, 0.0, -0.16, -0.33, 0.95, -0.51, 1.24, -0.46, -0.62, 0.98, 0.46, -1.29, -0.57, 1.55, -1.87, -0.56, -1.49, 0.71, 0.71, 0.19, 0.62, -0.27, -0.05, 2.14, -0.63, -1.01, -0.4, 1.18, 0.63, -1.64, 0.18, 0.35, 1.54, 0.13, 0.07, 0.88, -0.88, -0.41, 2.22, -1.51, -1.47, -0.76, -0.15, 0.9, 0.34, 0.62, -0.86, 0.62, -1.76, -0.89, 1.47, -1.29, -0.71, -0.24], "lr": {"a": 0.05, "b": -0.564, "r": -0.45, "p": 0.00020681866654952483, "n": 64}};
+var DJF = {norm:71.6, q10:36, q50:91, q90:181, mean:101, pa:0.56, pn:0.28, pb:0.16};
+
+var DEFAULT_DAYS = [
+ {d:"2026-10-02",tx:27,tn:24,p:40,c:"nub"},{d:"2026-10-03",tx:26,tn:23,p:12,c:"nub"},
+ {d:"2026-10-04",tx:26,tn:22,p:3,c:"nub"},{d:"2026-10-05",tx:26,tn:23,p:30,c:"nub"},
+ {d:"2026-10-06",tx:26,tn:23,p:3,c:"nub"},{d:"2026-10-07",tx:26,tn:22,p:3,c:"nub"},
+ {d:"2026-10-08",tx:22,tn:19,p:12,c:"nub"}
+];
+
+
+/* ================= Física y estadística ================= */
+function offs(z){
+  var dE=(z.e-REF.elev)/1000, du=z.u-REF.uhi;
+  var adv = K.advLapse*dE + K.advUhi*du;                          // noche mezclada (frente, viento, nubes)
+  var rad = K.radLapse*dE + K.radUhi*du + (TERR[z.t]||0);         // noche despejada y en calma
+  var tx  = K.txLapse*dE + K.txUhi*du + K.txSierra*z.s;           // máxima
+  function w(p){ return p*rad+(1-p)*adv; }
+  return {adv:adv, rad:rad, tx:tx, clim:w(W_CLIM), nino:w(W_NINO), ext:w(W_EXT)};
+}
+function pLe(t,off){ var x=-(t-off); return 1-Math.exp(-Math.exp(-(x-MU)/BETA)); }        // P(mín. abs. <= t)
+function qMin(p,off){ var y=-Math.log(-Math.log(1-p)); return -(MU+BETA*y)+off; }        // valor con prob. p de ser más frío
+function retLev(T,off){ return qMin(1/T,off); }
+function round1(x){ var r=Math.round(x*10)/10; return r===0?0:r; }                         // evita "-0.0"
+function f1(x){ return round1(x).toFixed(1); }
+function sgn(x){ var r=round1(x); return (r>0?"+":"")+r.toFixed(1); }
+function pct(x){ if(x<0.005) return "<1 %"; if(x>0.995) return ">99 %"; return Math.round(x*100)+" %"; }
+function dayLabel(iso){
+  var p=iso.split("-"), dt=new Date(+p[0],+p[1]-1,+p[2]);
+  if(isNaN(dt)) return iso;
+  return ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"][dt.getDay()]+" "+dt.getDate()+" "+["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"][dt.getMonth()];
+}
+function dayMin(d,o){ return d.tn+(d.c==="desp"?o.rad:o.adv); }
+function metric(z,k){
+  var o=offs(z);
+  if(k==="ext") return qMin(0.5,o.ext);
+  if(k==="frost") return pLe(0,o.ext);
+  if(k==="rain") return DJF.mean*z.fW;
+  if(k==="tmaxJan") return MONTHS[2].tx+o.tx;
+  if(k==="tminJan") return MONTHS[2].tn+o.nino;
+  if(k==="day") return days.length? dayMin(days[0],o) : null;
+  return null;
+}
+function fmtMetric(v,k){ if(v===null) return "sin datos"; if(k==="frost") return pct(v); if(k==="rain") return Math.round(v)+" mm"; return f1(v)+" °C"; }
+var METRIC_TXT={ext:"noche más fría probable",frost:"probabilidad de helada",rain:"lluvia dic-feb",tmaxJan:"máxima media de enero",tminJan:"mínima media de enero"};
+// Escalas fijas (no se estiran al mínimo y máximo) y paletas distintas por tipo de dato
+var PAL={temp:[[45,110,163],[143,192,222],[241,227,166],[229,154,77],[196,90,44]],
+         frost:[[244,247,250],[176,206,230],[92,150,201],[37,92,150],[18,48,94]],
+         rain:[[246,243,232],[196,224,214],[118,184,181],[47,128,141],[22,78,99]]};
+var SCALE={ext:{lo:-3,hi:3,pal:"temp"},tminJan:{lo:5,hi:12,pal:"temp"},tmaxJan:{lo:17,hi:25,pal:"temp"},
+           frost:{lo:0,hi:1,pal:"frost"},rain:{lo:60,hi:110,pal:"rain"},day:{lo:null,hi:null,pal:"temp"}};
+function palAt(name,t){ var S=PAL[name]; t=Math.max(0,Math.min(1,t)); var x=t*(S.length-1), i=Math.min(S.length-2,Math.floor(x)), f=x-i, a=S[i], b=S[i+1];
+  return "rgb("+a.map(function(v,j){return Math.round(v+(b[j]-v)*f);}).join(",")+")"; }
+function palCSS(name){ return "linear-gradient(90deg,"+PAL[name].map(function(c){return "rgb("+c.join(",")+")";}).join(",")+")"; }
+function shortVal(v,k){ if(v===null) return ""; if(k==="frost") return pct(v); if(k==="rain") return Math.round(v)+" mm"; return f1(v)+"°"; }
+
+
+
+var MAP = {W:640, H:642, LON0:-100.66, LAT1:26.02, K:0.901153, sx:972.8788};
+var MUNS = [{"n":"Montemorelos","z":null,"d":"M630.4,641.9L629.6,627.1L637.6,626.1L640.0,624.2L640.0,642.1L630.4,641.9ZM639.8,610.6L636.2,609.0L631.0,596.8L636.7,589.6L638.4,583.4L640.0,584.7L639.8,610.6Z","lx":634.7,"ly":633.3},{"n":"General Zuazua","z":null,"d":"M523.6,41.0L533.0,54.1L513.2,68.9L507.2,61.7L505.1,66.1L525.3,104.5L518.3,135.4L505.0,145.5L506.7,150.0L503.4,147.7L497.4,155.8L497.1,162.2L495.5,164.0L493.6,161.6L489.4,167.3L493.1,167.9L492.7,180.5L491.8,179.6L486.9,183.8L485.7,182.3L484.0,183.1L484.4,182.0L478.0,178.6L478.1,174.9L475.7,170.2L466.9,167.8L460.5,169.5L450.7,161.5L440.6,159.1L429.6,153.4L427.4,155.3L425.5,153.2L372.3,152.5L365.7,163.1L355.6,135.9L361.0,123.8L368.9,113.6L367.2,109.9L371.5,102.5L383.0,109.1L387.6,103.1L394.1,118.1L405.4,100.0L411.7,102.1L415.8,96.7L420.9,96.2L423.7,102.5L418.4,104.4L426.0,107.0L440.2,93.9L431.9,85.5L435.5,78.2L439.9,75.1L447.7,73.2L456.5,56.5L460.6,56.2L473.2,50.2L470.6,44.8L469.3,45.9L468.0,44.3L468.3,40.8L471.4,37.1L469.0,35.2L467.9,36.5L468.2,34.2L472.9,30.6L481.1,28.8L510.7,0.5L523.6,41.0Z","lx":478.2,"ly":92.2},{"n":"Salinas Victoria","z":"sal","d":"M457.6,0.0L452.2,5.6L450.6,0.0L457.6,0.0ZM411.2,0.0L406.9,1.6L404.8,0.0L411.2,0.0ZM374.3,1.1L377.3,11.5L376.8,17.6L342.4,0.0L374.3,1.1ZM339.0,0.7L338.6,3.6L333.7,7.3L333.6,9.1L341.0,10.6L349.3,16.4L357.3,16.6L365.8,34.7L373.4,39.6L370.1,57.5L375.0,57.3L376.9,66.3L369.4,70.7L364.4,83.2L364.2,89.1L366.9,90.5L371.5,102.5L367.2,109.9L368.9,113.5L361.0,123.8L356.0,136.9L340.5,144.2L340.4,165.9L317.2,166.4L316.1,163.4L313.8,163.3L309.6,148.0L312.2,148.2L308.9,136.3L306.4,137.3L287.4,89.9L295.1,83.3L295.8,78.3L300.7,73.6L304.2,72.7L277.2,42.8L257.0,45.0L254.6,36.9L257.8,32.0L254.5,18.9L250.1,7.4L245.1,0.0L339.0,0.7Z","lx":329.8,"ly":83.2},{"n":"Higueras","z":null,"d":"M640.0,93.1L635.2,100.3L628.4,103.7L625.7,108.0L621.9,108.3L621.1,111.7L580.6,97.3L521.7,99.2L505.1,66.1L507.2,61.7L513.2,68.9L533.0,54.1L523.6,41.0L510.7,0.5L487.1,22.8L481.6,7.1L478.9,6.4L478.7,0.0L640.0,0.0L640.0,93.1Z","lx":583.8,"ly":57.7},{"n":"Doctor González","z":null,"d":"M638.0,193.5L638.7,190.2L635.7,187.5L631.2,187.5L625.0,182.2L608.8,180.2L605.7,176.8L599.0,147.2L597.1,125.1L594.9,125.1L593.5,113.0L597.7,121.5L603.8,125.4L604.4,127.6L626.9,132.7L626.5,130.9L621.2,128.5L619.9,125.4L621.0,122.3L627.6,125.0L640.0,114.9L640.0,193.8L638.0,193.5Z","lx":620.4,"ly":156.4},{"n":"García","z":"gar","d":"M142.3,114.4L148.9,117.6L167.9,118.4L177.0,135.9L211.8,222.9L214.5,224.3L191.4,291.4L160.8,280.3L158.6,277.3L147.3,273.6L134.3,262.7L131.7,262.7L128.9,268.6L109.9,284.7L96.9,301.5L92.5,298.1L82.9,310.1L73.9,292.6L65.8,292.6L59.7,289.8L50.4,297.9L50.5,307.0L34.9,310.7L29.6,314.4L12.9,318.0L0.0,335.9L0.0,66.6L2.2,68.1L7.8,64.9L11.0,59.6L20.0,58.8L33.5,54.4L37.3,51.5L42.1,70.4L42.4,153.0L45.8,151.6L48.3,146.2L52.1,142.7L74.7,134.8L119.6,111.0L136.8,116.0L142.3,114.4Z","lx":99.7,"ly":192.2},{"n":"Cadereyta Jiménez","z":"cad","d":"M638.4,583.4L636.7,589.6L631.0,596.8L636.2,609.0L640.0,610.9L640.0,624.2L637.6,626.1L631.3,626.0L627.8,629.8L622.1,630.8L621.6,639.1L613.1,636.3L609.2,640.3L602.5,638.0L600.3,642.1L529.4,642.1L527.0,639.8L526.4,631.7L523.9,626.0L513.2,617.4L511.7,609.3L533.8,594.1L530.7,588.9L528.1,589.2L528.7,586.5L526.1,586.0L538.6,567.0L539.9,567.4L540.6,563.4L544.4,561.8L551.2,553.7L545.8,556.5L517.6,534.5L516.2,536.3L493.7,502.8L463.4,534.8L459.7,528.1L449.1,516.9L443.5,504.0L427.1,485.4L421.9,476.4L426.5,469.0L430.2,475.6L436.0,477.8L436.2,481.6L444.4,479.9L461.0,470.3L467.3,471.9L466.6,473.2L468.9,474.8L466.7,476.0L471.2,479.5L470.4,484.5L473.3,484.5L477.7,481.1L479.1,483.0L481.0,482.2L484.8,489.8L487.9,490.1L489.5,492.3L495.2,490.8L501.5,494.2L504.7,491.3L507.9,491.0L507.4,488.1L511.2,488.3L514.3,485.4L512.1,483.2L515.6,480.9L518.7,485.8L525.5,491.1L526.6,490.6L525.5,489.1L530.1,485.4L534.7,490.1L535.7,489.1L513.8,466.7L512.9,467.6L514.5,469.4L510.9,472.9L481.5,442.8L485.0,439.0L493.7,447.8L494.7,446.9L489.4,441.5L492.8,437.9L489.4,434.3L492.3,431.4L498.0,437.3L499.3,436.2L487.1,423.7L496.0,410.3L502.7,407.3L503.4,401.9L508.2,403.7L513.3,398.7L523.6,397.5L529.2,386.6L529.5,381.4L541.5,389.1L543.4,372.0L520.7,357.3L522.2,357.5L529.6,348.9L552.6,355.8L570.7,357.8L582.0,343.9L575.5,343.7L587.3,328.5L589.7,327.6L598.4,332.3L604.1,331.0L605.0,328.7L609.5,327.4L609.4,324.5L612.0,325.2L613.1,320.1L622.8,320.5L623.0,318.4L625.2,319.4L626.9,317.6L637.7,318.6L639.2,316.4L640.0,584.7L638.4,583.4Z","lx":583.0,"ly":479.2},{"n":"Allende","z":null,"d":"M527.6,640.6L529.4,642.1L526.7,642.1L527.6,640.6ZM600.5,641.9L602.5,638.0L609.2,640.3L612.6,636.4L621.5,639.2L622.6,637.6L621.8,631.2L628.9,629.0L630.5,642.1L600.5,641.9Z","lx":626.0,"ly":635.6},{"n":"General Escobedo","z":"esc","d":"M203.8,120.9L221.5,151.8L230.3,161.9L245.8,166.8L291.7,168.7L291.6,166.8L339.5,166.0L344.1,184.9L345.5,184.6L349.6,212.1L343.8,210.1L341.9,212.1L344.6,242.7L280.1,250.8L278.0,245.1L266.6,228.5L257.6,224.4L256.6,222.4L239.2,216.6L233.7,221.1L224.9,217.4L218.2,223.4L212.6,224.1L177.0,135.9L167.9,118.4L181.5,120.5L189.0,123.4L190.4,126.0L203.8,120.9Z","lx":270.2,"ly":184.5},{"n":"Ciénega de Flores","z":null,"d":"M478.7,0.0L478.9,6.4L481.6,7.1L487.1,22.8L481.1,28.8L472.9,30.6L468.2,34.2L467.9,36.5L469.0,35.2L471.4,37.1L468.3,40.8L468.0,44.3L469.3,45.9L470.6,44.8L473.2,50.2L460.6,56.2L456.5,56.5L447.7,73.2L439.9,75.1L435.5,78.2L431.9,85.5L440.2,93.9L426.0,107.0L418.4,104.4L423.7,102.5L420.9,96.2L415.8,96.7L411.7,102.1L405.4,100.0L394.1,118.1L387.6,103.1L383.0,109.1L371.5,102.5L366.9,90.5L364.2,89.1L364.4,83.2L369.4,70.7L376.9,66.3L375.0,57.3L370.1,57.5L373.4,39.6L365.8,34.7L357.3,16.6L349.3,16.4L341.0,10.6L333.3,8.5L338.6,3.6L339.1,0.0L342.4,0.0L376.8,17.6L377.3,11.5L373.9,0.0L404.8,0.0L406.9,1.6L411.2,0.0L450.6,0.0L452.2,5.6L457.6,0.0L478.7,0.0Z","lx":414.7,"ly":60.4},{"n":"Abasolo","z":null,"d":"M251.5,54.2L245.0,89.0L242.8,90.4L222.2,125.4L205.3,123.1L203.8,120.9L205.0,119.4L202.2,103.9L190.5,89.5L183.2,86.4L202.8,64.3L209.5,60.9L209.7,58.3L228.1,30.0L234.8,32.2L238.6,31.2L242.7,35.1L248.6,37.3L253.1,36.7L251.5,54.2Z","lx":218.2,"ly":78.3},{"n":"Mina","z":null,"d":"M169.9,1.8L167.6,0.0L170.9,0.0L169.9,1.8ZM161.0,0.0L153.6,22.6L158.7,24.7L156.8,29.8L157.9,30.0L156.9,32.6L153.3,32.9L137.6,66.5L144.1,113.3L136.8,116.0L119.6,111.0L74.7,134.8L52.1,142.7L48.3,146.2L45.8,151.6L42.4,153.0L42.1,70.4L37.3,51.5L33.5,54.4L20.0,58.8L11.0,59.6L7.8,64.9L2.2,68.1L0.0,66.6L0.0,0.0L161.0,0.0Z","lx":90.4,"ly":73.9},{"n":"Monterrey","z":"mty","d":"M296.2,262.5L296.0,267.5L297.2,267.2L294.7,274.7L299.6,275.0L300.7,277.4L300.7,289.3L329.8,303.5L343.1,303.3L343.5,308.1L349.1,310.1L349.6,328.2L341.1,329.4L336.7,334.3L340.4,334.2L338.2,337.1L340.7,340.1L342.8,350.2L338.8,354.4L343.6,359.2L338.2,362.9L338.9,366.7L342.6,369.7L340.6,376.0L341.2,381.4L339.6,384.0L342.4,387.7L365.4,383.2L365.4,392.1L371.1,399.3L372.9,405.6L388.9,426.9L403.3,455.6L417.5,470.2L427.1,485.4L431.8,489.4L428.8,492.0L424.2,493.1L421.8,488.2L418.2,488.1L415.0,485.3L412.8,487.4L410.5,486.0L409.1,489.5L405.8,491.6L401.5,489.6L397.9,490.2L392.5,498.6L383.3,505.5L381.4,505.7L377.0,498.5L374.2,500.6L377.5,507.2L369.3,510.7L352.8,523.3L345.3,507.9L339.0,504.1L341.1,498.5L334.8,487.0L327.4,482.9L325.6,477.5L320.5,477.8L315.9,474.0L316.0,470.6L312.8,467.6L299.5,460.0L302.8,448.6L299.1,446.7L298.7,440.9L301.2,438.0L300.7,436.0L289.9,431.2L276.7,419.4L286.2,401.0L287.1,394.6L292.3,389.1L304.3,362.9L297.1,357.5L291.7,356.9L260.0,339.5L257.1,342.4L245.1,342.7L231.9,337.4L229.6,333.9L230.0,316.7L224.7,308.9L207.6,299.3L206.0,296.9L191.4,291.4L214.5,224.3L218.2,223.4L224.9,217.4L233.7,221.1L239.2,216.6L260.3,224.4L266.6,228.5L271.6,235.0L280.1,250.8L283.4,250.3L296.2,262.5Z","lx":321.7,"ly":369.9},{"n":"Pesquería","z":null,"d":"M485.7,182.3L516.8,196.8L519.9,196.4L520.9,198.4L526.5,196.0L526.8,198.9L551.2,190.7L551.2,197.7L562.5,210.7L572.6,212.6L576.0,215.0L584.5,214.3L584.8,222.8L588.4,228.9L587.3,238.5L594.3,246.7L599.0,248.3L609.9,247.5L617.6,252.4L627.7,255.0L632.0,259.1L640.0,260.3L640.0,316.7L637.7,318.6L626.9,317.6L625.2,319.4L623.0,318.4L622.8,320.5L613.1,320.1L613.2,323.2L611.9,325.3L609.4,324.5L608.2,328.6L598.4,332.3L589.7,327.6L587.3,328.6L582.5,326.4L580.2,327.7L583.6,321.9L580.6,319.3L544.4,315.9L546.7,312.1L541.5,309.3L532.6,308.1L532.2,313.8L515.2,310.3L499.8,311.8L485.0,309.9L482.4,303.3L480.2,301.6L477.3,302.4L477.8,296.0L469.1,295.5L469.7,277.6L448.4,281.1L456.9,274.0L459.8,274.3L460.1,269.2L479.7,253.3L486.6,245.3L490.0,235.0L489.2,223.2L486.0,221.4L486.5,218.0L489.9,213.7L472.8,200.9L466.8,200.1L464.0,197.2L463.0,193.5L464.4,184.5L478.0,178.6L484.4,182.0L484.0,183.1L485.7,182.3Z","lx":552.7,"ly":255.5},{"n":"San Nicolás de los Garza","z":"snic","d":"M397.2,280.6L398.3,289.3L400.9,289.7L399.9,293.7L386.7,299.9L378.3,300.1L375.0,298.5L374.8,300.8L362.6,305.6L355.8,305.3L351.5,307.5L350.8,310.0L347.4,310.1L343.5,308.1L343.1,303.3L329.8,303.5L300.7,289.3L300.7,277.4L299.6,275.0L294.7,274.7L297.2,267.2L296.0,267.5L296.2,262.6L283.4,250.3L344.6,242.7L344.4,248.8L348.8,249.3L364.0,257.2L370.0,266.6L370.3,264.9L380.8,271.8L386.3,272.8L386.8,274.7L397.2,280.6Z","lx":345.0,"ly":276.5},{"n":"Santa Catarina","z":"stac","d":"M160.8,280.3L203.9,296.1L207.8,316.0L213.9,319.8L212.2,331.9L209.8,336.6L210.9,336.3L210.8,341.9L205.4,371.3L206.4,373.0L255.5,403.4L276.9,418.5L278.8,422.1L289.9,431.2L300.7,436.0L301.2,438.0L298.7,440.9L299.1,446.7L302.8,448.6L299.5,460.0L312.8,467.6L316.0,470.6L315.9,474.0L320.5,477.8L325.6,477.5L327.4,482.9L334.8,487.0L341.1,498.5L339.0,504.1L345.3,507.9L352.8,523.3L359.5,559.1L369.3,574.5L340.3,584.4L336.8,583.8L337.3,579.4L319.1,590.0L300.0,580.2L292.6,573.7L276.3,569.2L239.6,548.9L224.8,536.0L215.5,553.2L212.6,552.7L207.6,559.9L210.8,562.1L205.6,568.3L189.6,569.2L177.4,566.3L167.1,556.2L164.8,550.9L160.4,553.2L113.2,541.4L86.8,540.4L65.9,534.3L70.6,511.2L35.9,500.4L52.8,486.5L114.2,491.9L106.6,474.9L87.7,471.9L57.6,462.7L39.7,464.7L39.5,460.6L42.1,455.9L23.8,436.5L13.7,435.4L0.0,439.7L0.0,335.9L11.2,319.5L29.8,314.4L35.7,310.4L50.5,307.0L50.4,297.9L59.7,289.8L65.8,292.6L73.9,292.6L82.9,310.1L92.5,298.1L96.9,301.5L109.9,284.7L128.9,268.6L131.7,262.7L134.3,262.7L147.3,273.6L158.6,277.3L160.8,280.3Z","lx":142.0,"ly":426.4},{"n":"Santiago","z":"stgo","d":"M431.8,489.4L444.3,505.2L449.1,516.9L459.7,528.1L463.4,534.8L493.7,502.8L516.2,536.3L517.6,534.5L545.8,556.5L551.2,553.7L544.4,561.8L540.6,563.4L539.9,567.4L538.6,567.0L526.1,586.0L528.7,586.5L528.1,589.2L530.7,588.9L533.8,594.1L511.7,609.3L513.2,617.4L517.5,619.6L525.4,628.9L527.4,637.5L526.7,642.1L171.5,642.1L182.7,593.0L167.2,582.1L147.1,573.6L138.8,571.2L120.4,569.8L125.0,555.5L118.0,554.8L113.2,541.4L160.4,553.2L164.8,550.9L167.1,556.2L177.4,566.3L189.6,569.2L205.6,568.3L210.8,562.1L207.6,559.9L212.6,552.7L215.5,553.2L224.8,536.0L239.6,548.9L276.3,569.2L292.6,573.7L300.0,580.2L319.1,590.0L337.3,579.4L336.8,583.8L340.3,584.4L369.3,574.5L359.5,559.1L352.8,523.3L369.3,510.7L377.5,507.2L374.2,500.6L377.0,498.5L381.4,505.7L383.3,505.5L392.5,498.6L397.9,490.2L401.5,489.6L405.8,491.6L409.1,489.5L410.6,486.0L412.8,487.4L415.0,485.3L418.2,488.1L421.8,488.2L424.8,493.3L431.8,489.4Z","lx":451.5,"ly":563.7},{"n":"San Pedro Garza García","z":"spgg","d":"M276.0,418.0L255.5,403.4L206.4,373.0L205.4,371.3L210.8,341.9L210.9,336.3L209.8,336.6L212.2,331.9L213.9,319.8L207.8,316.0L203.9,296.1L218.0,303.9L219.5,306.9L221.9,306.8L225.9,310.5L230.0,316.7L229.6,333.9L231.9,337.4L245.1,342.7L257.1,342.4L260.0,339.5L291.7,356.9L297.1,357.5L304.3,362.9L292.3,389.1L287.1,394.6L286.2,401.0L276.0,418.0Z","lx":252.3,"ly":357.3},{"n":"Marín","z":null,"d":"M627.6,125.0L621.0,122.3L619.9,125.1L622.3,129.9L626.5,130.9L626.9,132.7L604.4,127.6L603.8,125.4L597.7,121.5L593.5,113.0L594.9,125.1L597.1,125.1L599.0,147.2L605.7,176.8L608.8,180.2L625.0,182.2L631.2,187.5L635.7,187.5L638.7,190.2L638.0,193.5L640.0,193.8L640.0,260.3L632.0,259.1L627.7,255.0L617.6,252.4L609.9,247.5L599.0,248.3L594.3,246.7L587.3,238.5L588.4,228.9L584.8,222.8L584.5,214.3L576.0,215.0L572.6,212.6L562.5,210.7L551.2,197.7L551.2,190.7L526.8,198.9L526.5,196.0L520.9,198.4L519.9,196.4L516.8,196.8L487.3,183.3L491.8,179.6L492.7,180.5L493.1,167.9L489.4,167.3L490.0,166.3L493.6,161.6L495.5,164.0L497.1,162.2L497.4,155.8L503.4,147.7L506.7,150.0L505.0,145.5L518.3,135.4L525.3,104.5L521.7,99.2L580.6,97.3L621.1,111.7L621.9,108.3L625.7,108.0L628.4,103.7L635.2,100.3L640.0,93.1L640.0,114.9L627.6,125.0Z","lx":549.9,"ly":178.2},{"n":"Juárez","z":"jua","d":"M544.4,315.9L582.2,320.2L583.6,321.9L580.2,327.7L584.6,326.4L587.3,328.5L575.5,343.7L582.0,343.9L570.7,357.8L552.6,355.8L529.6,348.9L522.2,357.5L521.1,356.8L543.4,372.0L541.5,389.1L529.5,381.4L529.2,386.6L523.6,397.5L513.3,398.7L508.2,403.7L503.4,401.9L502.7,407.3L496.0,410.3L487.1,423.7L499.3,436.2L498.0,437.3L492.3,431.4L489.4,434.3L492.8,437.9L489.4,441.5L494.7,446.9L493.7,447.8L485.0,439.0L481.5,442.8L510.9,472.9L514.5,469.4L512.9,467.6L513.8,466.7L535.7,489.1L534.7,490.1L530.1,485.4L525.5,489.1L526.6,490.6L525.5,491.1L518.7,485.8L515.6,480.9L512.1,483.2L514.3,485.4L511.2,488.3L507.4,488.1L507.9,491.0L504.7,491.3L501.5,494.2L495.2,490.8L489.5,492.3L487.9,490.1L484.8,489.8L481.0,482.2L479.1,483.0L477.7,481.1L473.3,484.5L470.4,484.5L471.2,479.5L466.7,476.0L468.9,474.8L466.6,473.2L467.3,471.9L461.0,470.3L444.4,479.9L436.2,481.6L436.0,477.8L430.2,475.6L426.5,469.0L421.5,476.4L417.5,470.2L403.3,455.6L388.9,426.9L381.3,418.5L379.6,413.2L372.9,405.6L371.1,399.3L365.4,392.1L366.4,384.5L395.2,386.1L395.7,388.3L411.8,377.0L414.4,373.2L416.0,373.9L464.4,339.9L469.1,338.3L476.6,308.2L499.8,311.8L515.2,310.3L532.2,313.8L533.0,308.2L546.0,311.4L544.4,315.9Z","lx":441.2,"ly":401.2},{"n":"El Carmen","z":null,"d":"M253.1,36.7L257.0,45.0L277.2,42.8L304.2,72.7L300.7,73.6L295.8,78.3L295.1,83.3L287.4,89.9L306.4,137.3L308.9,136.3L312.2,148.2L309.6,148.0L313.8,163.3L316.1,163.4L317.2,166.4L291.6,166.8L291.7,168.7L245.8,166.8L230.3,161.9L221.5,151.8L205.3,123.1L222.2,125.4L242.8,90.4L245.0,89.0L251.5,54.2L253.1,36.7Z","lx":264.2,"ly":102.9},{"n":"Hidalgo","z":null,"d":"M254.6,36.9L248.6,37.3L242.7,35.1L238.6,31.2L234.8,32.2L228.1,30.0L209.7,58.3L209.5,60.9L202.8,64.3L183.2,86.4L190.5,89.5L202.2,103.9L205.0,119.4L203.2,121.5L190.4,126.0L189.0,123.4L180.4,120.2L171.6,118.2L148.9,117.6L142.3,114.4L144.1,113.3L137.6,66.5L153.3,32.9L156.9,32.6L157.9,30.0L156.8,29.8L158.7,24.7L153.6,22.6L161.0,0.0L167.6,0.0L169.9,1.8L170.9,0.0L245.1,0.0L252.8,13.4L257.8,32.0L254.6,36.9Z","lx":172.2,"ly":63.0},{"n":"Guadalupe","z":"gpe","d":"M475.9,314.6L469.1,338.3L464.4,339.9L416.0,373.9L414.4,373.2L411.8,377.0L395.7,388.3L395.2,386.1L366.4,384.5L365.4,383.2L342.4,387.7L339.6,384.0L341.2,381.4L340.6,376.0L342.6,369.7L338.9,366.7L338.2,362.9L343.6,359.2L338.8,354.4L342.8,350.2L340.7,340.1L338.2,337.1L340.4,334.2L336.7,334.3L341.1,329.4L349.6,328.2L349.1,310.0L355.8,305.3L362.6,305.6L374.8,300.8L375.0,298.5L378.3,300.1L386.7,299.9L399.9,293.7L400.9,289.7L398.3,289.3L397.2,280.4L422.2,282.7L420.3,292.5L418.2,291.4L416.8,299.2L423.9,300.1L422.7,301.4L427.0,302.5L426.4,304.1L429.3,302.7L439.9,305.7L443.2,303.2L442.8,307.1L446.3,308.3L454.8,309.5L456.9,306.5L457.0,309.9L463.4,310.7L463.7,313.9L466.5,313.8L470.7,317.1L473.0,314.5L471.1,313.3L475.9,314.6Z","lx":404.8,"ly":334.4},{"n":"Apodaca","z":"apo","d":"M356.0,136.9L365.7,163.1L372.3,152.5L425.5,153.2L427.4,155.3L429.6,153.4L440.6,159.1L450.7,161.5L460.5,169.5L466.9,167.8L476.3,170.6L478.6,178.1L464.4,184.5L463.0,193.5L466.3,199.9L472.8,200.9L489.9,213.7L486.5,218.0L486.0,221.4L489.2,223.2L490.0,235.0L486.6,245.3L479.7,253.3L460.1,269.2L459.8,274.3L456.9,274.0L448.4,281.1L469.7,277.6L469.1,295.5L477.8,296.0L477.3,302.4L480.2,301.6L482.4,303.3L485.0,309.9L476.6,308.2L476.0,314.6L471.1,313.3L473.0,314.5L470.7,317.1L466.5,313.8L463.7,313.9L463.4,310.7L457.0,309.9L456.9,306.5L454.8,309.5L442.8,307.1L443.2,303.2L439.9,305.7L429.3,302.7L426.4,304.1L427.0,302.5L422.7,301.4L423.9,300.1L416.8,299.2L418.2,291.4L420.3,292.5L422.2,282.7L397.2,280.4L386.8,274.7L386.3,272.8L380.8,271.8L370.3,264.9L370.0,266.6L364.0,257.2L348.8,249.3L344.4,248.8L341.9,212.1L343.8,210.1L349.6,212.1L345.5,184.6L344.1,184.9L339.5,166.0L340.5,144.2L356.0,136.9Z","lx":416.4,"ly":226.6}];
+function proj(lat,lon){ return [(lon-MAP.LON0)*MAP.K*MAP.sx, (MAP.LAT1-lat)*MAP.sx]; }
+function unproj(x,y){ return [MAP.LAT1-y/MAP.sx, MAP.LON0+x/(MAP.K*MAP.sx)]; }
+var SVGNS="http://www.w3.org/2000/svg";
+function el(tag,attrs,parent){ var e=document.createElementNS(SVGNS,tag); for(var k in attrs) e.setAttribute(k,attrs[k]); if(parent) parent.appendChild(e); return e; }
+function line(pts){ return pts.map(function(p,i){var q=proj(p[0],p[1]);return (i?"L":"M")+q[0].toFixed(1)+","+q[1].toFixed(1);}).join(" "); }
+function poly(pts){ return line(pts)+"Z"; }
+function ellipse(lat,lon,rxKm,ryKm,rot){ // relieve como elipse en km
+  var c=proj(lat,lon), k=MAP.sx/111.32; return {cx:c[0],cy:c[1],rx:rxKm*k,ry:ryKm*k,rot:rot};
+}
+var VIEWS={all:[0,0,640,642]};
+(function(){ var c=proj(25.690,-100.290), w=250, h=w*642/640; VIEWS.core=[c[0]-w/2,c[1]-h/2,w,h]; })();
+var view=VIEWS.all.slice(), viewName="all";
+var munLayer, baseLayer, ptLayer, decoLayer, picking=false;
+var RELIEF=[ // [lat, lon, semieje mayor km, semieje menor km, rotación°, nombre]
+  [25.632,-100.236,4.8,1.8,-72,"Cerro de la Silla"],
+  [25.712,-100.428,4.2,1.7,8,"Cerro de las Mitras"],
+  [25.746,-100.338,1.9,1.2,20,"Topo Chico"],
+  [25.657,-100.338,3.6,0.7,-4,"Loma Larga"],
+  [25.789,-100.290,1.6,1.0,0,"Topo Grande"]
+];
+var SIERRA=[[25.36,-100.66],[25.655,-100.66],[25.665,-100.58],[25.640,-100.50],[25.628,-100.46],[25.615,-100.42],[25.612,-100.37],[25.605,-100.32],[25.585,-100.285],[25.560,-100.262],[25.520,-100.235],[25.480,-100.215],[25.440,-100.205],[25.36,-100.21]];
+var URBAN=[[25.835,-100.390],[25.840,-100.300],[25.815,-100.200],[25.775,-100.130],[25.720,-100.105],[25.672,-100.100],[25.640,-100.150],[25.625,-100.205],[25.648,-100.250],[25.600,-100.275],[25.570,-100.255],[25.595,-100.310],[25.622,-100.360],[25.640,-100.420],[25.655,-100.500],[25.690,-100.520],[25.725,-100.470],[25.760,-100.450],[25.800,-100.430]];
+var RIVER=[[25.662,-100.60],[25.668,-100.52],[25.674,-100.47],[25.676,-100.43],[25.669,-100.39],[25.668,-100.345],[25.671,-100.31],[25.674,-100.285],[25.670,-100.255],[25.664,-100.225],[25.657,-100.185],[25.650,-100.140],[25.645,-100.090],[25.640,-100.020],[25.636,-99.95]];
+var ROADS=[
+  {n:"Carretera Nacional",p:[[25.660,-100.288],[25.625,-100.272],[25.590,-100.258],[25.555,-100.240],[25.510,-100.205],[25.465,-100.180],[25.425,-100.152]]},
+  {n:"A Laredo",p:[[25.700,-100.312],[25.745,-100.305],[25.790,-100.300],[25.860,-100.296],[25.960,-100.293],[26.02,-100.29]]},
+  {n:"A Saltillo",p:[[25.676,-100.380],[25.676,-100.440],[25.670,-100.500],[25.655,-100.580],[25.640,-100.66]]},
+  {n:"Miguel Alemán",p:[[25.690,-100.270],[25.715,-100.220],[25.745,-100.160],[25.770,-100.100],[25.790,-100.03]]},
+  {n:"A Reynosa",p:[[25.672,-100.200],[25.660,-100.120],[25.640,-100.040],[25.620,-99.95]]}
+];
+
+
+/* ================= Almacenamiento seguro ================= */
+function load(k,def){ try{ var v=localStorage.getItem("zmm2_"+k); return v?JSON.parse(v):def; }catch(e){ return def; } }
+function save(k,v){ try{ localStorage.setItem("zmm2_"+k,JSON.stringify(v)); }catch(e){} }
+function num(v,def){ var x=parseFloat(v); return isFinite(x)?x:def; }
+function validDay(d){
+  return d && typeof d==="object" && /^\d{4}-\d{2}-\d{2}$/.test(d.d||"") ? {d:d.d,tx:num(d.tx,25),tn:num(d.tn,15),p:Math.max(0,num(d.p,0)),c:d.c==="desp"?"desp":"nub"} : null;
+}
+var edits = load("edits",{}) || {};
+Object.keys(edits).forEach(function(id){
+  var z=BYID[id], ed=edits[id]; if(!z||!ed) return;
+  if(num(ed.e,0)>=200 && num(ed.e,0)<=2500) z.e=num(ed.e,z.e);
+  if(TERR.hasOwnProperty(ed.t)) z.t=ed.t;
+  if(isFinite(ed.lat)&&isFinite(ed.lon)&&ed.lat>25.3&&ed.lat<26.1&&ed.lon>-100.8&&ed.lon<-99.8){ z.lat=+ed.lat; z.lon=+ed.lon; }
+});
+var days = (load("days",null)||[]).map(validDay).filter(Boolean);
+if(!days.length) days = clone(DEFAULT_DAYS);
+var cur = load("zone",HOME); if(!BYID[cur]) cur=HOME;
+function clone(o){ return JSON.parse(JSON.stringify(o)); }
+
+/* ================= Mapa geográfico ================= */
+function buildMap(){
+  var svg=document.getElementById("map"); svg.innerHTML="";
+  var defs=el("defs",{},svg);
+  var rg=el("radialGradient",{id:"hill",cx:"40%",cy:"35%",r:"70%"},defs);
+  el("stop",{offset:"0%","stop-color":"var(--sierra2)"},rg); el("stop",{offset:"100%","stop-color":"var(--sierra)"},rg);
+  var lg=el("linearGradient",{id:"sierraG",x1:"0",y1:"0",x2:"0",y2:"1"},defs);
+  el("stop",{offset:"0%","stop-color":"var(--sierra2)"},lg); el("stop",{offset:"100%","stop-color":"var(--sierra)"},lg);
+  munLayer=el("g",{},svg);
+  baseLayer=el("g",{"aria-hidden":"true","pointer-events":"none"},svg);
+  // mancha urbana, sierra, relieve, río, carreteras
+  el("path",{d:poly(URBAN),fill:"var(--urban)",opacity:"0.55"},baseLayer);
+  el("path",{d:poly(SIERRA),fill:"url(#sierraG)",opacity:"0.62"},baseLayer);
+  RELIEF.forEach(function(r){ var e=ellipse(r[0],r[1],r[2],r[3]); el("ellipse",{cx:e.cx,cy:e.cy,rx:e.rx,ry:e.ry,transform:"rotate("+r[4]+" "+e.cx+" "+e.cy+")",fill:"url(#hill)",opacity:"0.72"},baseLayer); });
+  el("path",{d:line(RIVER),fill:"none",stroke:"var(--river)","stroke-width":"2.4","stroke-linecap":"round","stroke-linejoin":"round"},baseLayer);
+  ROADS.forEach(function(r){ el("path",{d:line(r.p),fill:"none",stroke:"var(--road)","stroke-width":"1.1","stroke-dasharray":"5 3",opacity:"0.8"},baseLayer); });
+  decoLayer=el("g",{"aria-hidden":"true","pointer-events":"none"},svg);
+  ptLayer=el("g",{},svg);
+  munLayer.addEventListener("click",function(ev){ if(picking) return; var m=ev.target.getAttribute("data-z"); if(m) select(m); });
+  ptLayer.addEventListener("click",function(ev){ if(picking) return; var g=ev.target.closest("[data-id]"); if(g) select(g.getAttribute("data-id")); });
+  ptLayer.addEventListener("keydown",function(ev){ if(ev.key!=="Enter"&&ev.key!==" ") return; var g=ev.target.closest("[data-id]"); if(g){ ev.preventDefault(); select(g.getAttribute("data-id"),true); } });
+  svg.addEventListener("click",function(ev){
+    if(!picking) return;
+    var pt=svg.createSVGPoint(); pt.x=ev.clientX; pt.y=ev.clientY;
+    var q=pt.matrixTransform(svg.getScreenCTM().inverse()), ll=unproj(q.x,q.y), h=BYID[HOME];
+    h.lat=Math.round(ll[0]*10000)/10000; h.lon=Math.round(ll[1]*10000)/10000;
+    setPicking(false); cur=HOME; save("zone",cur); storeEdit();
+    document.getElementById("mapNote").textContent="Ubicación marcada en "+h.lat.toFixed(4)+", "+h.lon.toFixed(4)+". La posición solo cambia el mapa; el clima de la zona depende de la altitud y el terreno.";
+  });
+}
+function px2u(px){ var r=document.getElementById("map").getBoundingClientRect(); var w=r.width||640; return px*view[2]/w; }
+function drawPoints(){
+  var svg=document.getElementById("map");
+  svg.setAttribute("viewBox",view.map(function(v){return v.toFixed(2);}).join(" "));
+  var k=document.getElementById("mapMetric").value;
+  var vals=ZONES.map(function(z){return metric(z,k);});
+  var ok=vals.filter(function(v){return v!==null;});
+  var sc=SCALE[k], lo=sc.lo, hi=sc.hi;
+  if(lo===null){ lo=ok.length?Math.floor(Math.min.apply(null,ok)):0; hi=ok.length?Math.ceil(Math.max.apply(null,ok)):1; if(hi-lo<1) hi=lo+1; }
+  function tOf(v){ return v===null?0.5:(v-lo)/(hi-lo); }
+  function colorAt(t){ return palAt(sc.pal,t); }
+  var showVals=document.getElementById("showVals").checked;
+  document.querySelector(".legend .bar").style.background=palCSS(sc.pal);
+  document.getElementById("legLo").textContent=fmtMetric(lo,k);
+  document.getElementById("legHi").textContent=fmtMetric(hi,k);
+  document.getElementById("legTxt").textContent= k==="day" ? (days.length?"mínima del "+dayLabel(days[0].d):"agrega un día en la tabla") : METRIC_TXT[k];
+  // municipios
+  munLayer.innerHTML="";
+  var fs=px2u(11), lw=px2u(1);
+  MUNS.forEach(function(m){
+    var z=m.z?BYID[m.z]:null, v=z?metric(z,k):null;
+    var pth=el("path",{class:"mun",d:m.d,fill:z?colorAt(tOf(v)):"var(--panel)","fill-opacity":z?"0.32":"0.6",stroke:z?"var(--muted)":"var(--line)","stroke-width":(z?1.1:0.8)*lw,"stroke-dasharray":z?"none":(4*lw)+" "+(3*lw)},munLayer);
+    if(z){ pth.setAttribute("data-z",m.z); pth.style.cursor="pointer"; var ti=el("title",{},pth); ti.textContent=m.n+(v!==null?": "+fmtMetric(v,k)+" (cabecera)":""); }
+  });
+  // decoración: nombres de municipios, relieve, escala, norte
+  decoLayer.innerHTML="";
+  var vx=view[0], vy=view[1], vw=view[2], vh=view[3], showMun=(viewName==="all");
+  var reliefLabels=RELIEF.map(function(r){ return {q:proj(r[0],r[1]),n:r[5]}; });
+  var sm=proj(25.47,-100.47); if(viewName==="all"){ var ts=el("text",{x:sm[0],y:sm[1],"text-anchor":"middle","font-size":px2u(11),fill:"var(--panel)","font-style":"italic",opacity:"0.9"},decoLayer); ts.textContent="Sierra Madre Oriental"; }
+  var kmU=MAP.sx/111.32, km=(viewName==="all")?10:2, bx=vx+px2u(14), by=vy+vh-px2u(14);
+  el("rect",{x:bx-px2u(4),y:by-px2u(16),width:km*kmU+px2u(8)+px2u(30),height:px2u(22),fill:"var(--panel)",opacity:"0.75",rx:px2u(3)},decoLayer);
+  el("line",{x1:bx,x2:bx+km*kmU,y1:by,y2:by,stroke:"var(--ink)","stroke-width":px2u(2)},decoLayer);
+  el("line",{x1:bx,x2:bx,y1:by-px2u(4),y2:by+px2u(0.5),stroke:"var(--ink)","stroke-width":px2u(1.5)},decoLayer);
+  el("line",{x1:bx+km*kmU,x2:bx+km*kmU,y1:by-px2u(4),y2:by+px2u(0.5),stroke:"var(--ink)","stroke-width":px2u(1.5)},decoLayer);
+  var st=el("text",{x:bx+km*kmU+px2u(5),y:by+px2u(3.5),"font-size":px2u(10.5),fill:"var(--ink)"},decoLayer); st.textContent=km+" km";
+  var nx=vx+vw-px2u(18), ny=vy+px2u(16);
+  el("path",{d:"M"+nx+","+(ny-px2u(8))+"L"+(nx+px2u(5))+","+(ny+px2u(5))+"L"+nx+","+(ny+px2u(2))+"L"+(nx-px2u(5))+","+(ny+px2u(5))+"Z",fill:"var(--ink)"},decoLayer);
+  var nt=el("text",{x:nx,y:ny+px2u(17),"text-anchor":"middle","font-size":px2u(10),fill:"var(--ink)","font-weight":"700"},decoLayer); nt.textContent="N";
+  // puntos y etiquetas con colocación automática
+  ptLayer.innerHTML="";
+  var R=px2u(6.5), Ron=px2u(9.5), F=px2u(11.5), Fon=px2u(13.5), boxes=[];
+  var order=ZONES.slice().sort(function(a,b){ function pr(z){return z.id===cur?0:z.id===HOME?1:2;} return pr(a)-pr(b); });
+  order.forEach(function(z){ var q=proj(z.lat,z.lon), r=(z.id===cur?Ron:R)+px2u(2); boxes.push([q[0]-r,q[1]-r,q[0]+r,q[1]+r]); });
+  function hit(b){ for(var i=0;i<boxes.length;i++){ var c=boxes[i]; if(b[0]<c[2]&&b[2]>c[0]&&b[1]<c[3]&&b[3]>c[1]) return true; } return false; }
+  var draw=[];
+  order.forEach(function(z){
+    var q=proj(z.lat,z.lon), on=(z.id===cur), f=on?Fon:F, txt=(z.ln||z.n.replace(" centro",""))+(showVals?"  "+shortVal(vals[ZONES.indexOf(z)],k):"");
+    var tw=txt.length*f*0.53, th=f, gap=(on?Ron:R)+px2u(3), lab=null;
+    var cands=[[gap,th*0.35,"start"],[-gap,th*0.35,"end"],[-tw/2,-gap-th*0.15,"mid"],[-tw/2,gap+th*0.8,"mid"],[gap*0.8,-gap*0.6,"start"],[gap*0.8,gap+th*0.4,"start"],[-gap*0.8,-gap*0.6,"end"],[-gap*0.8,gap+th*0.4,"end"]];
+    for(var i=0;i<cands.length;i++){
+      var c=cands[i], x0=c[2]==="start"?q[0]+c[0]:c[2]==="end"?q[0]+c[0]-tw:q[0]+c[0], y0=q[1]+c[1]-th*0.8, b=[x0,y0,x0+tw,y0+th];
+      if(b[0]<view[0]||b[2]>view[0]+view[2]||b[1]<view[1]||b[3]>view[1]+view[3]) continue;
+      if(!hit(b)){ boxes.push(b); lab={x:c[2]==="mid"?q[0]:q[0]+c[0],y:q[1]+c[1],a:c[2]==="mid"?"middle":c[2]}; break; }
+    }
+    draw.push({z:z,q:q,on:on,f:f,txt:txt,lab:lab});
+  });
+  // nombres de relieve y de municipios: solo donde no chocan con zonas ni se salen de la vista
+  function inView(b){ return b[0]>=vx&&b[2]<=vx+vw&&b[1]>=vy&&b[3]<=vy+vh; }
+  reliefLabels.forEach(function(r){
+    if(viewName==="all"&&r.n!=="Cerro de la Silla"&&r.n!=="Cerro de las Mitras") return;
+    var f=px2u(9.5), tw=r.n.length*f*0.55, b=[r.q[0]-tw/2,r.q[1]-f*0.6,r.q[0]+tw/2,r.q[1]+f*0.5];
+    if(!inView(b)||hit(b)) return; boxes.push(b);
+    var t=el("text",{x:r.q[0],y:r.q[1]+px2u(3),"text-anchor":"middle","font-size":f,fill:"var(--ink)","font-weight":"600",opacity:"0.75"},decoLayer); t.textContent=r.n;
+  });
+  if(showMun) MUNS.forEach(function(m){
+    var nm=m.n.replace(" de los Garza","").replace(" Garza García","").replace("General ","").replace(" Jiménez","");
+    var f=px2u(m.z?10.5:9.5), tw=nm.length*f*0.52, b=[m.lx-tw/2,m.ly-f*0.8,m.lx+tw/2,m.ly+f*0.3];
+    if(!inView(b)||hit(b)) return; boxes.push(b);
+    var t=el("text",{x:m.lx,y:m.ly,"text-anchor":"middle","font-size":f,fill:"var(--muted)","font-style":"italic",opacity:m.z?"0.95":"0.6"},decoLayer);
+    t.textContent=nm;
+  });
+  draw.reverse().forEach(function(d){
+    var z=d.z, i=ZONES.indexOf(z), v=vals[i];
+    var g=el("g",{class:"pt","data-id":z.id,tabindex:"0",role:"button","aria-pressed":d.on?"true":"false","aria-label":z.n+", "+fmtMetric(v,k)},ptLayer);
+    el("circle",{cx:d.q[0],cy:d.q[1],r:px2u(16),fill:"transparent"},g);
+    if(z.id===HOME) el("circle",{cx:d.q[0],cy:d.q[1],r:(d.on?Ron:R)+px2u(4.5),fill:"none",stroke:"var(--accent)","stroke-width":px2u(3)},g);
+    el("circle",{class:"dot",cx:d.q[0],cy:d.q[1],r:d.on?Ron:R,fill:colorAt(tOf(v)),stroke:d.on?"var(--sel)":"var(--panel)","stroke-width":px2u(d.on?3:1.6)},g);
+    if(d.lab){ var tx=el("text",{class:"zl"+(d.on?" on":""),x:d.lab.x,y:d.lab.y,"text-anchor":d.lab.a,"font-size":d.f,"font-weight":d.on?"700":"500",fill:"var(--ink)",stroke:"var(--panel)","stroke-width":px2u(3),"paint-order":"stroke"},g); tx.textContent=d.txt; }
+    var ti=el("title",{},g); ti.textContent=z.n+": "+fmtMetric(v,k);
+  });
+}
+function setView(name){
+  viewName=name; var target=VIEWS[name], start=view.slice(), t0=null;
+  document.getElementById("vAll").setAttribute("aria-pressed",name==="all"?"true":"false");
+  document.getElementById("vCore").setAttribute("aria-pressed",name==="core"?"true":"false");
+  var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(reduce){ view=target.slice(); drawPoints(); return; }
+  function step(ts){ if(!t0) t0=ts; var p=Math.min(1,(ts-t0)/350), e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;
+    view=start.map(function(v,i){return v+(target[i]-v)*e;});
+    document.getElementById("map").setAttribute("viewBox",view.join(" "));
+    if(p<1) requestAnimationFrame(step); else { view=target.slice(); drawPoints(); } }
+  requestAnimationFrame(step);
+}
+function setPicking(on){
+  picking=on; var b=document.getElementById("pickHome"); b.setAttribute("aria-pressed",on?"true":"false");
+  b.textContent=on?"Toca tu ubicación en el mapa…":"Marcar ubicación";
+  document.getElementById("mapwrap").classList.toggle("picking",on);
+  if(on){ document.getElementById("mapNote").textContent="Toca el punto del mapa que quieres marcar. Usa «Centro urbano» para mayor precisión."; if(viewName==="all") setView("core"); }
+}
+document.getElementById("vAll").addEventListener("click",function(){ setView("all"); });
+document.getElementById("vCore").addEventListener("click",function(){ setView("core"); });
+document.getElementById("pickHome").addEventListener("click",function(){ setPicking(!picking); });
+document.addEventListener("keydown",function(ev){ if(ev.key==="Escape"&&picking) setPicking(false); });
+var rsT=null; window.addEventListener("resize",function(){ clearTimeout(rsT); rsT=setTimeout(drawPoints,150); });
+
+
+
+/* ================= Panel de zona ================= */
+function renderZone(){
+  var z=BYID[cur], o=offs(z), h=BYID[HOME], oh=offs(h);
+  var nm=document.getElementById("zName"); nm.textContent=z.n;
+  if(z.id===HOME){ var s=document.createElement("span"); s.className="home-tag"; s.textContent="Referencia"; nm.appendChild(s); }
+  var edited=(z.e!==z.e0||z.t!==z.t0||z.lat!==z.lat0||z.lon!==z.lon0);
+  document.getElementById("zMeta").textContent=z.m+", "+z.e+" m, "+TERR_TXT[z.t]+(edited?" (ajustado por ti)":"");
+  document.getElementById("zStats").innerHTML=
+    '<div class="stat cold"><div class="num">'+f1(qMin(0.5,o.ext))+' °C</div><div class="lbl">noche más fría probable del invierno (8 de cada 10 inviernos: '+f1(qMin(0.1,o.ext))+' a '+f1(qMin(0.9,o.ext))+' °C)</div></div>'+
+    '<div class="stat warm"><div class="num">'+pct(pLe(0,o.ext))+'</div><div class="lbl">probabilidad de llegar a 0 °C o menos</div></div>'+
+    '<div class="stat rain"><div class="num">'+Math.round(DJF.mean*z.fW)+' mm</div><div class="lbl">lluvia dic-feb esperada (normal '+Math.round(DJF.norm*z.fW)+' mm)</div></div>';
+  var vs=document.getElementById("zVs");
+  if(z.id===HOME){
+    vs.textContent="Frente al centro de Monterrey: noches "+sgn(o.adv)+" °C con frente frío y "+sgn(o.rad)+" °C con cielo despejado; máximas "+sgn(o.tx)+" °C; lluvia de invierno "+Math.round(z.fW*100)+" % de la del centro.";
+  } else {
+    vs.textContent="Frente a Monterrey centro: noches "+sgn(o.adv-oh.adv)+" °C con frente frío y "+sgn(o.rad-oh.rad)+" °C con cielo despejado; máximas "+sgn(o.tx-oh.tx)+" °C; lluvia de invierno "+Math.round(z.fW/h.fW*100)+" % de la de Monterrey centro.";
+  }
+  var ei=document.getElementById("elevIn"); ei.value=z.e; ei.removeAttribute("aria-invalid");
+  document.getElementById("elevMsg").textContent="";
+  document.getElementById("terrIn").value=z.t;
+  document.getElementById("resetZ").disabled=!edited;
+  document.getElementById("zNote").textContent=z.note||"";
+  document.getElementById("zsel").value=cur;
+}
+
+/* ================= Próximos días ================= */
+function renderDays(){
+  var z=BYID[cur], t=document.getElementById("daysTbl"), zn=esc(z.ln||z.n);
+  var h='<thead><tr><th></th><th class="grp" colspan="4">Pronóstico para Monterrey (escríbelo)</th><th class="grp res" colspan="3">Resultado en '+zn+'</th><th></th></tr>'+
+        '<tr><th>Fecha</th><th>Máx. °C</th><th>Mín. °C</th><th>Lluvia mm</th><th style="text-align:left">Cielo de noche</th><th>Máx.</th><th>Mín.</th><th>Lluvia</th><th><span class="sr">Acciones</span></th></tr></thead><tbody>';
+  days.forEach(function(d,i){
+    h+='<tr data-row="'+i+'">'+
+      '<td class="wide" data-l="Fecha"><span style="display:flex;gap:8px;align-items:center"><input type="date" aria-label="Fecha" data-i="'+i+'" data-k="d" value="'+esc(d.d)+'"><span class="small" data-wd>'+dayLabel(d.d)+'</span></span></td>'+
+      '<td data-l="Máx. Monterrey"><input type="number" aria-label="Máxima en Monterrey, °C" data-i="'+i+'" data-k="tx" value="'+d.tx+'" step="0.5" min="-15" max="50"></td>'+
+      '<td data-l="Mín. Monterrey"><input type="number" aria-label="Mínima en Monterrey, °C" data-i="'+i+'" data-k="tn" value="'+d.tn+'" step="0.5" min="-15" max="40"></td>'+
+      '<td data-l="Lluvia mm"><input type="number" aria-label="Lluvia en Monterrey, mm" data-i="'+i+'" data-k="p" value="'+d.p+'" min="0" max="600" step="1"></td>'+
+      '<td class="wide" data-l="Cielo de noche"><select aria-label="Cielo de noche" data-i="'+i+'" data-k="c"><option value="nub"'+(d.c!=="desp"?" selected":"")+'>Nublado o con viento</option><option value="desp"'+(d.c==="desp"?" selected":"")+'>Despejado y en calma</option></select></td>'+
+      '<td class="res" data-l="Máx. aquí"><span class="out" data-o="tx"></span></td>'+
+      '<td class="res" data-l="Mín. aquí"><span class="out cold" data-o="tn"></span></td>'+
+      '<td class="res" data-l="Lluvia aquí"><span class="out" data-o="p"></span></td>'+
+      '<td data-l=""><button class="ghost" type="button" data-del="'+i+'" aria-label="Quitar '+dayLabel(d.d)+'">Quitar</button></td></tr>';
+  });
+  if(!days.length) h+='<tr><td colspan="9" class="small">No hay días. Usa «Agregar día» para escribir el pronóstico.</td></tr>';
+  t.innerHTML=h+'</tbody>';
+  updateDayOutputs();
+}
+// Actualiza solo los resultados, sin redibujar la tabla (así no se pierde el foco al escribir)
+function updateDayOutputs(){
+  var z=BYID[cur], o=offs(z);
+  document.querySelectorAll("#daysTbl tr[data-row]").forEach(function(tr){
+    var d=days[+tr.getAttribute("data-row")]; if(!d) return;
+    tr.querySelector('[data-o="tx"]').textContent=f1(d.tx+o.tx)+" °C";
+    tr.querySelector('[data-o="tn"]').textContent=f1(dayMin(d,o))+" °C";
+    tr.querySelector('[data-o="p"]').textContent=(d.p>0&&d.p*z.fA<0.5?"<1":Math.round(d.p*z.fA))+" mm";
+    tr.querySelector('[data-wd]').textContent=dayLabel(d.d);
+  });
+  checkStale();
+}
+function checkStale(){
+  var box=document.getElementById("staleMsg"); box.innerHTML="";
+  if(!days.length) return;
+  var last=days.map(function(d){return d.d;}).sort().pop(), now=new Date();
+  var today=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0");
+  if(last<today){ box.innerHTML='<div class="warn">Todos los días de la tabla ya pasaron. Escribe el pronóstico vigente para que los resultados por zona sirvan hoy.</div>'; }
+}
+function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+var daysTbl=document.getElementById("daysTbl");
+daysTbl.addEventListener("input",function(ev){
+  var i=ev.target.getAttribute("data-i"), k=ev.target.getAttribute("data-k"); if(i===null||!days[+i]) return;
+  var v=ev.target.value;
+  if(k==="tx"||k==="tn"||k==="p"){
+    var x=parseFloat(v), mn=num(ev.target.min,-99), mx=num(ev.target.max,999);
+    if(!isFinite(x)||x<mn||x>mx){ ev.target.setAttribute("aria-invalid","true"); return; }
+    ev.target.removeAttribute("aria-invalid"); v=(k==="p")?Math.max(0,x):x;
+  }
+  if(k==="d" && !/^\d{4}-\d{2}-\d{2}$/.test(v)) return;
+  days[+i][k]=v; save("days",days); updateDayOutputs();
+  if(+i===0 && document.getElementById("mapMetric").value==="day") drawPoints();
+});
+daysTbl.addEventListener("change",function(ev){ if(ev.target.tagName==="SELECT") ev.target.dispatchEvent(new Event("input",{bubbles:true})); });
+daysTbl.addEventListener("click",function(ev){
+  var b=ev.target.closest("[data-del]"); if(!b) return;
+  days.splice(+b.getAttribute("data-del"),1); save("days",days); renderDays(); drawPoints();
+});
+document.getElementById("addDay").addEventListener("click",function(){
+  var last=days[days.length-1], d;
+  if(last){ var p=last.d.split("-"), dt=new Date(+p[0],+p[1]-1,+p[2]+1); d=dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0")+"-"+String(dt.getDate()).padStart(2,"0"); }
+  else { var n=new Date(); d=n.getFullYear()+"-"+String(n.getMonth()+1).padStart(2,"0")+"-"+String(n.getDate()).padStart(2,"0"); }
+  days.push({d:d,tx:last?last.tx:24,tn:last?last.tn:15,p:0,c:last?last.c:"nub"}); save("days",days); renderDays(); drawPoints();
+  var inputs=daysTbl.querySelectorAll('tr[data-row="'+(days.length-1)+'"] input[data-k="tx"]'); if(inputs[0]) inputs[0].focus();
+});
+document.getElementById("resetDays").addEventListener("click",function(){ days=clone(DEFAULT_DAYS); save("days",days); renderDays(); drawPoints(); });
+
+/* ================= Invierno ================= */
+function renderWinter(){
+  var z=BYID[cur], o=offs(z);
+  function cell(v,n){ return '<span class="out">'+v+'</span><span class="small"> ('+n+')</span>'; }
+  var h='<thead><tr><th>Mes</th><th>Frentes</th><th>Máx. °C</th><th>Mín. °C</th><th>Lluvia mm</th></tr></thead><tbody>';
+  MONTHS.forEach(function(m){
+    h+='<tr><td>'+m.m+'</td><td>'+m.ff+'</td><td>'+cell(f1(m.tx+o.tx),f1(m.txn+o.tx))+'</td><td>'+cell(f1(m.tn+o.nino),f1(m.tnn+o.clim))+'</td><td>'+cell(Math.round(m.p*z.fW),Math.round(m.pn*z.fW))+'</td></tr>';
+  });
+  document.getElementById("winTbl").innerHTML=h+'</tbody>';
+  drawWinterChart(z,o);
+
+  var c='<p class="small" style="margin-top:0">La noche más fría del invierno en '+esc(z.n)+' tendrá con mayor probabilidad <b>'+f1(qMin(0.5,o.ext))+' °C</b>; en 8 de cada 10 inviernos queda entre '+f1(qMin(0.1,o.ext))+' y '+f1(qMin(0.9,o.ext))+' °C.</p>';
+  [[0,"0 °C o menos"],[-3,"−3 °C o menos"],[-5,"−5 °C o menos"]].forEach(function(u){
+    var p=pLe(u[0],o.ext);
+    c+='<div class="prob"><span>'+u[1]+'</span><div class="track" role="img" aria-label="'+pct(p)+'"><div class="fill" style="width:'+Math.max(1,p*100).toFixed(1)+'%"></div></div><b>'+pct(p)+'</b></div>';
+  });
+  c+='<p class="small">Un invierno frío de cada 10 llega a '+f1(retLev(10,o.ext))+' °C; uno de cada 30, a '+f1(retLev(30,o.ext))+' °C. El riesgo distintivo con El Niño es el frío húmedo: llovizna que se congela y aguanieve en puentes y pasos a desnivel.</p>';
+  document.getElementById("coldProbs").innerHTML=c;
+
+  var r='<p class="small" style="margin-top:0">Normal para esta zona: '+Math.round(DJF.norm*z.fW)+' mm. Esperado: alrededor de <b>'+Math.round(DJF.q50*z.fW)+' a '+Math.round(DJF.mean*z.fW)+' mm</b>; 8 de cada 10 escenarios entre '+Math.round(DJF.q10*z.fW)+' y '+Math.round(DJF.q90*z.fW)+' mm.</p>';
+  r+='<div class="tri" role="img" aria-label="Probabilidad de lluvia abajo de lo normal '+pct(DJF.pb)+', normal '+pct(DJF.pn)+', arriba de lo normal '+pct(DJF.pa)+'">'+
+     '<div style="width:'+DJF.pb*100+'%;background:#a8664b" title="Abajo de lo normal">'+pct(DJF.pb)+'</div>'+
+     '<div style="width:'+DJF.pn*100+'%;background:#6f817a" title="Normal">Normal '+pct(DJF.pn)+'</div>'+
+     '<div style="width:'+DJF.pa*100+'%;background:#2d6ea3" title="Arriba de lo normal">Arriba de lo normal '+pct(DJF.pa)+'</div></div>'+
+     '<p class="small">Izquierda: abajo de lo normal. Las probabilidades por tercio son las mismas en todas las zonas, porque cada zona se compara con su propia normal.</p>';
+  document.getElementById("rainBox").innerHTML=r;
+}
+function drawWinterChart(z,o){
+  var svg=document.getElementById("winChart"); svg.innerHTML="";
+  var W=520,H=220,L=40,R=40,T=14,B=28, n=MONTHS.length, cw=(W-L-R)/n;
+  var tmin=Math.floor(Math.min.apply(null,MONTHS.map(function(m){return Math.min(m.tn+o.nino,m.tnn+o.clim);}))/5)*5;
+  var tmax=Math.ceil(Math.max.apply(null,MONTHS.map(function(m){return Math.max(m.tx,m.txn)+o.tx;}))/5)*5;
+  var pmax=Math.ceil(Math.max.apply(null,MONTHS.map(function(m){return m.p*z.fW;}))/20)*20;
+  function yT(v){ return T+(tmax-v)/(tmax-tmin)*(H-T-B); }
+  function yP(v){ return H-B-(v/pmax)*(H-T-B)*0.55; }
+  function xC(i){ return L+cw*i+cw/2; }
+  for(var v=tmin; v<=tmax; v+=5){ el("line",{x1:L,x2:W-R,y1:yT(v),y2:yT(v),stroke:"var(--line)","stroke-width":"1"},svg); var tl=el("text",{x:L-6,y:yT(v)+4,"text-anchor":"end"},svg); tl.textContent=v+"°"; }
+  MONTHS.forEach(function(m,i){
+    el("rect",{x:xC(i)-cw*0.18,y:yP(m.p*z.fW),width:cw*0.36,height:H-B-yP(m.p*z.fW),fill:"var(--river)",opacity:"0.55"},svg);
+    el("rect",{x:xC(i)-cw*0.18,y:yP(m.pn*z.fW),width:cw*0.36,height:1.5,fill:"var(--ink)"},svg);
+    var ml=el("text",{x:xC(i),y:H-8,"text-anchor":"middle"},svg); ml.textContent=m.m;
+  });
+  function line(key,col,dash){
+    var d=MONTHS.map(function(m,i){ var v=key(m); return (i?"L":"M")+xC(i).toFixed(1)+","+yT(v).toFixed(1); }).join(" ");
+    el("path",{d:d,fill:"none",stroke:col,"stroke-width":dash?"1.5":"2.5","stroke-dasharray":dash?"4 3":"none"},svg);
+  }
+  line(function(m){return m.txn+o.tx;},"var(--warm)",true);
+  line(function(m){return m.tx+o.tx;},"var(--warm)",false);
+  line(function(m){return m.tnn+o.clim;},"var(--cold)",true);
+  line(function(m){return m.tn+o.nino;},"var(--cold)",false);
+  svg.setAttribute("aria-label","Gráfica de máximas, mínimas y lluvia de noviembre a marzo en "+z.n+", pronóstico contra normal");
+}
+
+/* ================= 100 años ================= */
+function phaseColor(o){ if(o===null) return "#9aa7a4"; return o>=1.5?"#b0281e":o>=0.5?"#e07b4c":o<=-0.5?"#3d78b0":"#c9c2a6"; }
+var histDrawn=false;
+function drawHistory(){
+  if(histDrawn) return; histDrawn=true;
+  var svg=document.getElementById("histBars"), W=720,H=250,L=36,R=44,T=10,Bm=24, n=HIST.y.length;
+  var lo=-2.2, hi=4.2; function y(v){ return T+(hi-v)/(hi-lo)*(H-T-Bm); } var bw=(W-L-R)/n;
+  for(var g=-2; g<=4; g+=1){ el("line",{x1:L,x2:W-R,y1:y(g),y2:y(g),stroke:"var(--line)","stroke-width":g===0?"1.2":"0.6"},svg); var t=el("text",{x:L-5,y:y(g)+4,"text-anchor":"end"},svg); t.textContent=(g>0?"+":"")+g+"°"; }
+  HIST.y.forEach(function(yr,i){
+    var v=HIST.a[i], x=L+i*bw;
+    var rc=el("rect",{x:x+0.6,y:Math.min(y(v),y(0)),width:Math.max(1,bw-1.2),height:Math.abs(y(v)-y(0)),fill:phaseColor(HIST.o[i])},svg);
+    var ti=el("title",{},rc); ti.textContent=yr-1+"-"+yr+": "+(v>0?"+":"")+v.toFixed(2)+" °C"+(HIST.o[i]!==null?", ONI "+HIST.o[i].toFixed(2):"");
+    if(yr%20===0||yr===1901){ var tl=el("text",{x:x+bw/2,y:H-6,"text-anchor":"middle"},svg); tl.textContent=yr; }
+  });
+  el("path",{d:HIST.t.map(function(v,i){return (i?"L":"M")+(L+i*bw+bw/2).toFixed(1)+","+y(v).toFixed(1);}).join(" "),fill:"none",stroke:"var(--ink)","stroke-width":"2.2"},svg);
+  // pronóstico 2026-27 (a la derecha, separado por el hueco 2014-2026 sin datos)
+  var fx=W-R+24;
+  el("line",{x1:W-R+8,x2:W-R+8,y1:T,y2:H-Bm,stroke:"var(--muted)","stroke-dasharray":"3 3","stroke-width":"1"},svg);
+  el("line",{x1:fx,x2:fx,y1:y(FC27.p90),y2:y(FC27.p10),stroke:"var(--accent)","stroke-width":"8","stroke-linecap":"round",opacity:"0.45"},svg);
+  el("circle",{cx:fx,cy:y(FC27.mean),r:"5",fill:"var(--accent)",stroke:"var(--ink)","stroke-width":"1.2"},svg);
+  var fl=el("text",{x:W-2,y:y(FC27.p90)-8,"text-anchor":"end"},svg); fl.textContent="2027";
+  var fl2=el("text",{x:W-2,y:H-6,"text-anchor":"end"},svg); fl2.textContent="pron.";
+  // dispersión
+  var sv=document.getElementById("histScatter"), W2=420,H2=300,L2=40,B2=34,T2=10,R2=10;
+  function xs(o){ return L2+(o+2.2)/(5.2)*(W2-L2-R2); } function ys(v){ return T2+(3.5-v)/(6.4)*(H2-T2-B2); }
+  [-2,-1,0,1,2,3].forEach(function(g){ el("line",{x1:xs(g),x2:xs(g),y1:T2,y2:H2-B2,stroke:"var(--line)","stroke-width":g===0?"1.2":"0.5"},sv); var t=el("text",{x:xs(g),y:H2-B2+14,"text-anchor":"middle"},sv); t.textContent=(g>0?"+":"")+g; });
+  [-2,-1,0,1,2,3].forEach(function(g){ el("line",{x1:L2,x2:W2-R2,y1:ys(g),y2:ys(g),stroke:"var(--line)","stroke-width":g===0?"1.2":"0.5"},sv); var t=el("text",{x:L2-5,y:ys(g)+4,"text-anchor":"end"},sv); t.textContent=(g>0?"+":"")+g+"°"; });
+  el("rect",{x:xs(2.1),y:T2,width:xs(2.7)-xs(2.1),height:H2-B2-T2,fill:"var(--accent)",opacity:"0.25"},sv);
+  var tt=el("text",{x:xs(2.4),y:T2+12,"text-anchor":"middle"},sv); tt.textContent="2026-27";
+  HIST.y.forEach(function(yr,i){ var o=HIST.o[i]; if(o===null) return;
+    var c=el("circle",{cx:xs(o),cy:ys(HIST.r[i]),r:"4",fill:phaseColor(o),stroke:"var(--panel)","stroke-width":"1"},sv);
+    var ti=el("title",{},c); ti.textContent=(yr-1)+"-"+yr+": ONI "+o.toFixed(2)+", "+(HIST.r[i]>0?"+":"")+HIST.r[i].toFixed(2)+" °C"; });
+  el("line",{x1:xs(-2.1),y1:ys(HIST.lr.a+HIST.lr.b*-2.1),x2:xs(2.9),y2:ys(HIST.lr.a+HIST.lr.b*2.9),stroke:"var(--ink)","stroke-width":"2"},sv);
+  var ax=el("text",{x:(L2+W2)/2,y:H2-4,"text-anchor":"middle"},sv); ax.textContent="Índice ONI de diciembre a febrero";
+  var ay=el("text",{x:12,y:(T2+H2-B2)/2,"text-anchor":"middle",transform:"rotate(-90 12 "+((T2+H2-B2)/2)+")"},sv); ay.textContent="°C, sin tendencia";
+}
+
+/* ================= Comparar ================= */
+function renderRank(){
+  var k=document.getElementById("cmpMetric").value, hv=metric(BYID[HOME],k);
+  var arr=ZONES.map(function(z){return {z:z,v:metric(z,k)};});
+  var tempMetric=(k==="ext"||k==="tmaxJan"||k==="tminJan");
+  arr.sort(function(a,b){ return tempMetric? a.v-b.v : b.v-a.v; });
+  var vals=arr.map(function(a){return a.v;}), lo=Math.min.apply(null,vals), hi=Math.max.apply(null,vals);
+  var base=tempMetric? lo-1 : 0;
+  var h='<div class="row hd" aria-hidden="true"><span>Zona</span><span></span><span style="text-align:right">Valor</span><span class="d">vs. Monterrey centro</span></div>';
+  arr.forEach(function(a){
+    var w=(a.v-base)/((hi-base)||1), sc=SCALE[k], t=(a.v-sc.lo)/(sc.hi-sc.lo), bc=palAt(sc.pal,t);
+    var diff = k==="frost" ? sgnPts(a.v-hv) : k==="rain" ? sgnInt(a.v-hv)+" mm" : sgn(a.v-hv)+" °C";
+    h+='<div class="row'+(a.z.id===cur?' on':'')+'" data-id="'+a.z.id+'" tabindex="0" role="button" aria-label="'+esc(a.z.n)+', '+fmtMetric(a.v,k)+'"><span>'+esc(a.z.n)+(a.z.id===HOME?' <span class="home-tag">Referencia</span>':'')+'</span><div class="b" style="width:'+Math.max(2,w*100).toFixed(1)+'%;background:'+bc+'"></div><b style="text-align:right">'+fmtMetric(a.v,k)+'</b><span class="d">'+(a.z.id===HOME?"":diff)+'</span></div>';
+  });
+  document.getElementById("rank").innerHTML=h;
+}
+function sgnPts(x){ var r=Math.round(x*100); return (r>0?"+":"")+r+" pts"; }
+function sgnInt(x){ var r=Math.round(x); return (r>0?"+":"")+r; }
+var rankEl=document.getElementById("rank");
+rankEl.addEventListener("click",function(ev){ var r=ev.target.closest("[data-id]"); if(r) select(r.getAttribute("data-id")); });
+rankEl.addEventListener("keydown",function(ev){ if(ev.key!=="Enter"&&ev.key!==" ") return; var r=ev.target.closest("[data-id]"); if(r){ ev.preventDefault(); select(r.getAttribute("data-id")); } });
+
+/* ================= Controles ================= */
+var zsel=document.getElementById("zsel"), groups={};
+ZONES.forEach(function(z){
+  if(!groups[z.g]){ groups[z.g]=document.createElement("optgroup"); groups[z.g].label=z.g; zsel.appendChild(groups[z.g]); }
+  var op=document.createElement("option"); op.value=z.id; op.textContent=z.n; groups[z.g].appendChild(op);
+});
+zsel.addEventListener("change",function(){ select(zsel.value); });
+document.getElementById("homeBtn").addEventListener("click",function(){ select(HOME); });
+document.getElementById("mapMetric").addEventListener("change",drawPoints);
+document.getElementById("showVals").addEventListener("change",drawPoints);
+document.getElementById("cmpMetric").addEventListener("change",renderRank);
+function storeEdit(){ var z=BYID[cur]; if(z.e===z.e0&&z.t===z.t0&&z.lat===z.lat0&&z.lon===z.lon0) delete edits[cur]; else edits[cur]={e:z.e,t:z.t,lat:z.lat,lon:z.lon}; save("edits",edits); renderAll(); }
+document.getElementById("elevIn").addEventListener("change",function(ev){
+  var v=parseFloat(ev.target.value), msg=document.getElementById("elevMsg");
+  if(!isFinite(v)||v<200||v>2500){ ev.target.setAttribute("aria-invalid","true"); msg.textContent="Escribe una altitud entre 200 y 2 500 m. En la ZMM casi todo está entre 340 y 900 m."; return; }
+  BYID[cur].e=Math.round(v); storeEdit();
+});
+document.getElementById("terrIn").addEventListener("change",function(ev){ BYID[cur].t=ev.target.value; storeEdit(); });
+document.getElementById("resetZ").addEventListener("click",function(){ var z=BYID[cur]; z.e=z.e0; z.t=z.t0; z.lat=z.lat0; z.lon=z.lon0; storeEdit(); });
+document.getElementById("resetAll").addEventListener("click",function(){
+  if(!confirm("¿Borrar tus altitudes, terrenos y el pronóstico escrito?")) return;
+  ZONES.forEach(function(z){z.e=z.e0;z.t=z.t0;z.lat=z.lat0;z.lon=z.lon0;}); edits={}; days=clone(DEFAULT_DAYS); cur=HOME;
+  save("edits",edits); save("days",days); save("zone",cur); renderAll();
+});
+// Pestañas accesibles (flechas izquierda/derecha, Inicio, Fin)
+var tabs=[].slice.call(document.querySelectorAll('[role="tab"]'));
+function activate(tab,focus){
+  tabs.forEach(function(t){ var on=(t===tab); t.setAttribute("aria-selected",on?"true":"false"); t.tabIndex=on?0:-1; document.getElementById(t.getAttribute("aria-controls")).hidden=!on; });
+  if(tab.getAttribute("data-tab")==="hist") drawHistory();
+  if(focus) tab.focus();
+}
+tabs.forEach(function(t,i){
+  t.addEventListener("click",function(){ activate(t); });
+  t.addEventListener("keydown",function(ev){
+    var j=null; if(ev.key==="ArrowRight") j=(i+1)%tabs.length; else if(ev.key==="ArrowLeft") j=(i-1+tabs.length)%tabs.length; else if(ev.key==="Home") j=0; else if(ev.key==="End") j=tabs.length-1;
+    if(j!==null){ ev.preventDefault(); activate(tabs[j],true); }
+  });
+});
+function select(id,keepFocus){
+  if(!BYID[id]) return; cur=id; save("zone",id); renderAll();
+  if(keepFocus){ var g=ptLayer.querySelector('[data-id="'+id+'"]'); if(g) g.focus(); }
+}
+function renderAll(){ renderZone(); drawPoints(); renderDays(); renderWinter(); renderRank(); }
+buildMap(); renderAll();
+})();
+</script>
+</body>
+</html>
