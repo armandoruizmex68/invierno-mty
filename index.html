@@ -242,7 +242,7 @@ nav.tabs svg{width:22px;height:22px}
     <h3>Límites</h3>
     <p>Calibración con dos estaciones; relieve, río y carreteras con trazo aproximado; el nivel de la lluvia invernal es incierto (las fuentes difieren de 38 a 101 mm). Es un pronóstico de probabilidades, no del tiempo de un día. Para alertas, sigue al SMN y a Protección Civil de Nuevo León.</p>
     <p><a href="https://claude.ai/artifact/TH5HsSWQQCAeaCaHqfQfQm" target="_blank" rel="noopener" style="color:var(--cold);font-weight:600">Abrir la versión de escritorio</a>, con la tabla de método completa, la gráfica de El Niño contra la temperatura y más detalle.</p>
-    <p class="small">Modelo emitido el 2 de octubre de 2026. Fuentes: Berkeley Earth; NOAA CPC (ONI, ENSO); IRI; SMN (normales y frentes fríos); INEGI (límites municipales).</p>
+    <p class="small">Modelo emitido el 2 de octubre de 2026. Fuentes: Berkeley Earth; NOAA CPC (ONI, ENSO); IRI; SMN (normales y frentes fríos); INEGI (límites municipales); <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (pronóstico automático de los próximos días, licencia CC BY 4.0).</p>
   </div>
 </div>
 
@@ -313,7 +313,9 @@ nav.tabs svg{width:22px;height:22px}
     <p class="note" style="margin:0 0 10px">Escribe el pronóstico oficial para la ciudad de Monterrey y verás el resultado para <b id="daysZone"></b>. Con cielo despejado y sin viento, las diferencias entre zonas se agrandan.</p>
     <div id="staleMsg"></div>
     <div id="dayCards"></div>
+    <button class="btn" type="button" id="fcBtn" style="width:100%;margin:0 0 8px">Traer pronóstico automático</button>
     <div class="row2"><button class="btn" type="button" id="addDay">Agregar día</button><button class="btn ghost" type="button" id="resetDays">Ejemplo</button></div>
+    <p class="small" id="fcStatus" role="status" style="margin-top:10px"></p>
     <p class="small" style="margin-top:10px">El ejemplo es el pronóstico publicado el 1 de octubre de 2026 con base en el SMN.</p>
       <button class="backtop" type="button" data-top>↑ Ir a las secciones</button>
   </section>
@@ -392,6 +394,34 @@ var DEFAULT_DAYS = [
  {d:"2026-10-06",tx:26,tn:23,p:3,c:"nub"},{d:"2026-10-07",tx:26,tn:22,p:3,c:"nub"},
  {d:"2026-10-08",tx:22,tn:19,p:12,c:"nub"}
 ];
+
+/* ================= Pronóstico automático (Open-Meteo) ================= */
+// Se consulta SIEMPRE el punto de la estación de referencia (Monterrey centro); la app lo ajusta a cada zona.
+// No se envía la ubicación del usuario. Es un modelo global, no el pronóstico oficial del SMN.
+var FC_URL = "https://api.open-meteo.com/v1/forecast?latitude=25.733&longitude=-100.30"
+  + "&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&hourly=cloud_cover,wind_speed_10m"
+  + "&forecast_days=7&timezone=America%2FMexico_City&wind_speed_unit=kmh";
+var FC_MAX_EDAD_MS = 2*3600*1000;                  // el pronóstico automático se renueva si tiene más de 2 h
+var CLEAR_CLOUD = 30, CLEAR_WIND = 10;             // noche "despejada y en calma": nubosidad media < 30 % y viento medio < 10 km/h (00 a 08 h)
+function parseForecast(j){
+  try{
+    var D=j.daily, H=j.hourly, out=[];
+    for(var i=0;i<D.time.length;i++){
+      var tx=D.temperature_2m_max[i], tn=D.temperature_2m_min[i], p=D.precipitation_sum[i];
+      if(typeof tx!=="number"||typeof tn!=="number"||!isFinite(tx)||!isFinite(tn)) continue;
+      var sc=0,sw=0,n=0;
+      for(var h=0;h<H.time.length;h++){
+        if(H.time[h].indexOf(D.time[i]+"T")!==0) continue;
+        var hr=+H.time[h].slice(11,13); if(hr>8) continue;
+        if(typeof H.cloud_cover[h]==="number"&&typeof H.wind_speed_10m[h]==="number"){ sc+=H.cloud_cover[h]; sw+=H.wind_speed_10m[h]; n++; }
+      }
+      var clear = n>=4 && sc/n<CLEAR_CLOUD && sw/n<CLEAR_WIND;
+      out.push({d:D.time[i], tx:Math.round(tx*10)/10, tn:Math.round(tn*10)/10, p:Math.round(Math.max(0,+p||0)*10)/10, c:clear?"desp":"nub"});
+    }
+    return out.length?out:null;
+  }catch(e){ return null; }
+}
+function fcLabel(t){ var d=new Date(t); return d.toLocaleDateString("es-MX",{day:"numeric",month:"short"})+", "+d.toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"}); }
 
 
 /* ================= Física y estadística ================= */
@@ -708,10 +738,10 @@ function updateDayOutputs(){
 }
 function setDayVal(inp){
   var i=+inp.getAttribute("data-i"), k=inp.getAttribute("data-k"), d=days[i]; if(!d) return;
-  if(k==="d"){ if(/^\d{4}-\d{2}-\d{2}$/.test(inp.value)){ d.d=inp.value; save("days",days); updateDayOutputs(); renderHome(); } return; }
+  if(k==="d"){ if(/^\d{4}-\d{2}-\d{2}$/.test(inp.value)){ d.d=inp.value; saveDays(); updateDayOutputs(); renderHome(); } return; }
   var x=parseFloat(inp.value), mn=num(inp.min,-99), mx=num(inp.max,999);
   if(!isFinite(x)||x<mn||x>mx){ inp.setAttribute("aria-invalid","true"); return; }
-  inp.removeAttribute("aria-invalid"); d[k]=x; save("days",days); updateDayOutputs(); renderHome(); mapDirty=true;
+  inp.removeAttribute("aria-invalid"); d[k]=x; saveDays(); updateDayOutputs(); renderHome(); mapDirty=true;
 }
 var dc=document.getElementById("dayCards");
 dc.addEventListener("input",function(ev){ if(ev.target.matches("input[data-k]")) setDayVal(ev.target); });
@@ -722,20 +752,20 @@ dc.addEventListener("click",function(ev){
     var v=Math.round((num(inp.value,0)+st)*10)/10, mn=num(inp.min,-99), mx=num(inp.max,999);
     inp.value=Math.max(mn,Math.min(mx,v)); setDayVal(inp);
   } else if(b.hasAttribute("data-sky")){
-    var i=+b.getAttribute("data-i"); days[i].c=b.getAttribute("data-sky"); save("days",days);
+    var i=+b.getAttribute("data-i"); days[i].c=b.getAttribute("data-sky"); saveDays();
     b.parentNode.querySelectorAll("button").forEach(function(x){ x.setAttribute("aria-pressed",x===b?"true":"false"); });
     updateDayOutputs(); renderHome(); mapDirty=true;
   } else if(b.hasAttribute("data-del")){
-    days.splice(+b.getAttribute("data-del"),1); save("days",days); renderDays(); renderHome(); mapDirty=true;
+    days.splice(+b.getAttribute("data-del"),1); saveDays(); renderDays(); renderHome(); mapDirty=true;
   }
 });
 document.getElementById("addDay").addEventListener("click",function(){
   var last=days[days.length-1], d;
   if(last){ var p=last.d.split("-"), dt=new Date(+p[0],+p[1]-1,+p[2]+1); d=dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0")+"-"+String(dt.getDate()).padStart(2,"0"); } else d=today();
-  days.push({d:d,tx:last?last.tx:24,tn:last?last.tn:15,p:0,c:last?last.c:"nub"}); save("days",days); renderDays(); renderHome();
+  days.push({d:d,tx:last?last.tx:24,tn:last?last.tn:15,p:0,c:last?last.c:"nub"}); saveDays(); renderDays(); renderHome();
   var cards=dc.querySelectorAll(".day"); if(cards.length) cards[cards.length-1].scrollIntoView({block:"center",behavior:"smooth"});
 });
-document.getElementById("resetDays").addEventListener("click",function(){ days=clone(DEFAULT_DAYS); save("days",days); renderDays(); renderHome(); mapDirty=true; });
+document.getElementById("resetDays").addEventListener("click",function(){ days=clone(DEFAULT_DAYS); saveDays(); renderDays(); renderHome(); mapDirty=true; });
 
 /* ================= Invierno ================= */
 function renderWinter(){
@@ -848,6 +878,26 @@ function renderAll(){ renderHome(); renderDays(); renderWinter(); renderRank(); 
 
 buildMap();
 document.getElementById("vAll").setAttribute("aria-pressed","false"); document.getElementById("vCore").setAttribute("aria-pressed","true");
+
+/* ---- Pronóstico automático: solo reemplaza los días si el usuario no los ha escrito a mano ---- */
+var fc=load("fc",null); if(!fc||typeof fc!=="object") fc={t:0,auto:true}; fc.t=+fc.t||0;
+var fcBusy=false;
+function setFcMsg(txt){ var el=document.getElementById("fcStatus"); if(!el) return;
+  el.textContent = txt || (fc.auto&&fc.t ? "Pronóstico automático de Open-Meteo para Monterrey centro, actualizado el "+fcLabel(fc.t)+". Es un modelo global, no el pronóstico oficial del SMN: úsalo como referencia." : "Días escritos a mano o de ejemplo. Usa «Traer pronóstico automático» para cargar el de Open-Meteo."); }
+function saveDays(){ save("days",days); fc.auto=false; save("fc",fc); setFcMsg(); }
+function traerPronostico(){
+  if(fcBusy) return; fcBusy=true; var b=document.getElementById("fcBtn"); if(b) b.disabled=true; setFcMsg("Consultando Open-Meteo…");
+  var ctl=window.AbortController?new AbortController():null, to=setTimeout(function(){ if(ctl) ctl.abort(); },12000);
+  fetch(FC_URL, ctl?{signal:ctl.signal}:{}).then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function(j){ var nd=parseForecast(j); if(!nd) throw new Error("vacío"); days=nd; save("days",days); fc={t:Date.now(),auto:true}; save("fc",fc); renderAll(); setFcMsg(); })
+    .catch(function(){ setFcMsg("No se pudo obtener el pronóstico automático (sin conexión o servicio no disponible). Se conservan los días actuales."); })
+    .then(function(){ clearTimeout(to); fcBusy=false; if(b) b.disabled=false; });
+}
+document.getElementById("fcBtn").addEventListener("click",function(){
+  if(fc.auto===false && !window.confirm("Esto reemplaza los días que escribiste a mano. ¿Continuar?")) return;
+  traerPronostico();
+});
+if(navigator.onLine!==false && fc.auto!==false && Date.now()-fc.t>FC_MAX_EDAD_MS) traerPronostico(); else setFcMsg();
 renderAll(); show(screen);
 if("serviceWorker" in navigator && /^https?:$/.test(location.protocol)){ window.addEventListener("load",function(){ navigator.serviceWorker.register("sw.js").catch(function(){}); }); }
 })();

@@ -220,7 +220,8 @@ footer{margin-top:22px;font-size:13px;color:var(--muted);display:flex;flex-wrap:
     <p class="note">Escribe el pronóstico oficial para la ciudad de Monterrey (SMN, Protección Civil o tu fuente de confianza) y la app lo ajusta a la zona elegida. Indica cómo estará el cielo de noche: despejado y en calma agranda las diferencias entre zonas.</p>
     <div id="staleMsg"></div>
     <div class="scroll"><table id="daysTbl"></table></div>
-    <div class="controls"><button type="button" id="addDay">Agregar día</button><button type="button" class="ghost" id="resetDays">Volver al pronóstico de ejemplo</button></div>
+    <div class="controls"><button type="button" id="fcBtn">Traer pronóstico automático</button><button type="button" id="addDay">Agregar día</button><button type="button" class="ghost" id="resetDays">Volver al pronóstico de ejemplo</button></div>
+    <p class="small" id="fcStatus" role="status"></p>
     <p class="small">El pronóstico de ejemplo es el publicado el 1 de octubre de 2026 por medios locales con base en el SMN; la lluvia en mm es una estimación según la intensidad descrita.</p>
   </section>
 
@@ -307,7 +308,7 @@ footer{margin-top:22px;font-size:13px;color:var(--muted);display:flex;flex-wrap:
     <h3>Límites</h3>
     <p>La serie histórica es regional y mensual; no permite contar heladas. El modelo de zonas se calibró con dos estaciones, y las ubicaciones del mapa son aproximadas. El nivel de la lluvia invernal es incierto: las fuentes difieren de 38 a 101 mm. Un pronóstico estacional da probabilidades; un solo frente ártico puede definir el invierno. Para alertas, sigue al SMN y a Protección Civil de Nuevo León.</p>
     <h3>Fuentes</h3>
-    <p class="small">Berkeley Earth, temperaturas por ciudad (Monterrey, 1825-2013); NOAA CPC, índice ONI (1950-2026) y discusión ENSO del 10 sep 2026; IRI Columbia, sep 2026; SMN, normales 1951-2010 de Apodaca, Santiago y Santa Catarina; NOAA NCEI, normales 1991-2020 de Monterrey; SMN, pronóstico de frentes fríos 2026-27; Magaña (ed.), Los impactos de El Niño en México, UNAM (1999); Atmósfera 30(3), 2017.</p>
+    <p class="small">Berkeley Earth, temperaturas por ciudad (Monterrey, 1825-2013); NOAA CPC, índice ONI (1950-2026) y discusión ENSO del 10 sep 2026; IRI Columbia, sep 2026; SMN, normales 1951-2010 de Apodaca, Santiago y Santa Catarina; NOAA NCEI, normales 1991-2020 de Monterrey; SMN, pronóstico de frentes fríos 2026-27; Magaña (ed.), Los impactos de El Niño en México, UNAM (1999); Atmósfera 30(3), 2017.; <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (pronóstico automático de los próximos días, licencia CC BY 4.0)</p>
   </section>
 
   <footer><span>Versión 3 del modelo, emitida el 2 de octubre de 2026. Revisa las actualizaciones de NOAA (8 oct y 19 nov de 2026) y los avisos del SMN.</span><span><a href="https://claude.ai/artifact/AU4dGMK7ory8eKRPtmAJyy" target="_blank" rel="noopener" style="color:var(--cold);font-weight:600">Versión para celular</a> · <button class="link" type="button" id="resetAll">Borrar todos mis ajustes</button></span></footer>
@@ -347,6 +348,34 @@ var DEFAULT_DAYS = [
  {d:"2026-10-06",tx:26,tn:23,p:3,c:"nub"},{d:"2026-10-07",tx:26,tn:22,p:3,c:"nub"},
  {d:"2026-10-08",tx:22,tn:19,p:12,c:"nub"}
 ];
+
+/* ================= Pronóstico automático (Open-Meteo) ================= */
+// Se consulta SIEMPRE el punto de la estación de referencia (Monterrey centro); la app lo ajusta a cada zona.
+// No se envía la ubicación del usuario. Es un modelo global, no el pronóstico oficial del SMN.
+var FC_URL = "https://api.open-meteo.com/v1/forecast?latitude=25.733&longitude=-100.30"
+  + "&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&hourly=cloud_cover,wind_speed_10m"
+  + "&forecast_days=7&timezone=America%2FMexico_City&wind_speed_unit=kmh";
+var FC_MAX_EDAD_MS = 2*3600*1000;                  // el pronóstico automático se renueva si tiene más de 2 h
+var CLEAR_CLOUD = 30, CLEAR_WIND = 10;             // noche "despejada y en calma": nubosidad media < 30 % y viento medio < 10 km/h (00 a 08 h)
+function parseForecast(j){
+  try{
+    var D=j.daily, H=j.hourly, out=[];
+    for(var i=0;i<D.time.length;i++){
+      var tx=D.temperature_2m_max[i], tn=D.temperature_2m_min[i], p=D.precipitation_sum[i];
+      if(typeof tx!=="number"||typeof tn!=="number"||!isFinite(tx)||!isFinite(tn)) continue;
+      var sc=0,sw=0,n=0;
+      for(var h=0;h<H.time.length;h++){
+        if(H.time[h].indexOf(D.time[i]+"T")!==0) continue;
+        var hr=+H.time[h].slice(11,13); if(hr>8) continue;
+        if(typeof H.cloud_cover[h]==="number"&&typeof H.wind_speed_10m[h]==="number"){ sc+=H.cloud_cover[h]; sw+=H.wind_speed_10m[h]; n++; }
+      }
+      var clear = n>=4 && sc/n<CLEAR_CLOUD && sw/n<CLEAR_WIND;
+      out.push({d:D.time[i], tx:Math.round(tx*10)/10, tn:Math.round(tn*10)/10, p:Math.round(Math.max(0,+p||0)*10)/10, c:clear?"desp":"nub"});
+    }
+    return out.length?out:null;
+  }catch(e){ return null; }
+}
+function fcLabel(t){ var d=new Date(t); return d.toLocaleDateString("es-MX",{day:"numeric",month:"short"})+", "+d.toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"}); }
 
 
 /* ================= Física y estadística ================= */
@@ -662,22 +691,22 @@ daysTbl.addEventListener("input",function(ev){
     ev.target.removeAttribute("aria-invalid"); v=(k==="p")?Math.max(0,x):x;
   }
   if(k==="d" && !/^\d{4}-\d{2}-\d{2}$/.test(v)) return;
-  days[+i][k]=v; save("days",days); updateDayOutputs();
+  days[+i][k]=v; saveDays(); updateDayOutputs();
   if(+i===0 && document.getElementById("mapMetric").value==="day") drawPoints();
 });
 daysTbl.addEventListener("change",function(ev){ if(ev.target.tagName==="SELECT") ev.target.dispatchEvent(new Event("input",{bubbles:true})); });
 daysTbl.addEventListener("click",function(ev){
   var b=ev.target.closest("[data-del]"); if(!b) return;
-  days.splice(+b.getAttribute("data-del"),1); save("days",days); renderDays(); drawPoints();
+  days.splice(+b.getAttribute("data-del"),1); saveDays(); renderDays(); drawPoints();
 });
 document.getElementById("addDay").addEventListener("click",function(){
   var last=days[days.length-1], d;
   if(last){ var p=last.d.split("-"), dt=new Date(+p[0],+p[1]-1,+p[2]+1); d=dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0")+"-"+String(dt.getDate()).padStart(2,"0"); }
   else { var n=new Date(); d=n.getFullYear()+"-"+String(n.getMonth()+1).padStart(2,"0")+"-"+String(n.getDate()).padStart(2,"0"); }
-  days.push({d:d,tx:last?last.tx:24,tn:last?last.tn:15,p:0,c:last?last.c:"nub"}); save("days",days); renderDays(); drawPoints();
+  days.push({d:d,tx:last?last.tx:24,tn:last?last.tn:15,p:0,c:last?last.c:"nub"}); saveDays(); renderDays(); drawPoints();
   var inputs=daysTbl.querySelectorAll('tr[data-row="'+(days.length-1)+'"] input[data-k="tx"]'); if(inputs[0]) inputs[0].focus();
 });
-document.getElementById("resetDays").addEventListener("click",function(){ days=clone(DEFAULT_DAYS); save("days",days); renderDays(); drawPoints(); });
+document.getElementById("resetDays").addEventListener("click",function(){ days=clone(DEFAULT_DAYS); saveDays(); renderDays(); drawPoints(); });
 
 /* ================= Invierno ================= */
 function renderWinter(){
@@ -813,7 +842,7 @@ document.getElementById("resetZ").addEventListener("click",function(){ var z=BYI
 document.getElementById("resetAll").addEventListener("click",function(){
   if(!confirm("¿Borrar tus altitudes, terrenos y el pronóstico escrito?")) return;
   ZONES.forEach(function(z){z.e=z.e0;z.t=z.t0;z.lat=z.lat0;z.lon=z.lon0;}); edits={}; days=clone(DEFAULT_DAYS); cur=HOME;
-  save("edits",edits); save("days",days); save("zone",cur); renderAll();
+  save("edits",edits); saveDays(); save("zone",cur); renderAll();
 });
 // Pestañas accesibles (flechas izquierda/derecha, Inicio, Fin)
 var tabs=[].slice.call(document.querySelectorAll('[role="tab"]'));
@@ -834,6 +863,26 @@ function select(id,keepFocus){
   if(keepFocus){ var g=ptLayer.querySelector('[data-id="'+id+'"]'); if(g) g.focus(); }
 }
 function renderAll(){ renderZone(); drawPoints(); renderDays(); renderWinter(); renderRank(); }
+
+/* ---- Pronóstico automático: solo reemplaza los días si el usuario no los ha escrito a mano ---- */
+var fc=load("fc",null); if(!fc||typeof fc!=="object") fc={t:0,auto:true}; fc.t=+fc.t||0;
+var fcBusy=false;
+function setFcMsg(txt){ var el=document.getElementById("fcStatus"); if(!el) return;
+  el.textContent = txt || (fc.auto&&fc.t ? "Pronóstico automático de Open-Meteo para Monterrey centro, actualizado el "+fcLabel(fc.t)+". Es un modelo global, no el pronóstico oficial del SMN: úsalo como referencia." : "Días escritos a mano o de ejemplo. Usa «Traer pronóstico automático» para cargar el de Open-Meteo."); }
+function saveDays(){ save("days",days); fc.auto=false; save("fc",fc); setFcMsg(); }
+function traerPronostico(){
+  if(fcBusy) return; fcBusy=true; var b=document.getElementById("fcBtn"); if(b) b.disabled=true; setFcMsg("Consultando Open-Meteo…");
+  var ctl=window.AbortController?new AbortController():null, to=setTimeout(function(){ if(ctl) ctl.abort(); },12000);
+  fetch(FC_URL, ctl?{signal:ctl.signal}:{}).then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function(j){ var nd=parseForecast(j); if(!nd) throw new Error("vacío"); days=nd; save("days",days); fc={t:Date.now(),auto:true}; save("fc",fc); renderAll(); setFcMsg(); })
+    .catch(function(){ setFcMsg("No se pudo obtener el pronóstico automático (sin conexión o servicio no disponible). Se conservan los días actuales."); })
+    .then(function(){ clearTimeout(to); fcBusy=false; if(b) b.disabled=false; });
+}
+document.getElementById("fcBtn").addEventListener("click",function(){
+  if(fc.auto===false && !window.confirm("Esto reemplaza los días que escribiste a mano. ¿Continuar?")) return;
+  traerPronostico();
+});
+if(navigator.onLine!==false && fc.auto!==false && Date.now()-fc.t>FC_MAX_EDAD_MS) traerPronostico(); else setFcMsg();
 buildMap(); renderAll();
 })();
 </script>
