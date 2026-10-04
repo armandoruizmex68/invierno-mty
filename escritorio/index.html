@@ -93,7 +93,6 @@ td.res{background:color-mix(in srgb,var(--accent) 7%,transparent)}
 .out{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-size:20px;font-weight:600}
 .out.cold{color:var(--cold)}
 .small{font-size:13px;color:var(--muted)}
-.skysel{width:100%;min-height:44px;font:600 16px "Source Sans 3",sans-serif;border:1px solid var(--line);border-radius:10px;background:var(--field);color:var(--ink);padding:0 10px}
 .skyro{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;border:1px solid var(--line);border-radius:10px;font-size:14px;font-weight:600;line-height:1.2}.skyro small{font-weight:400;color:var(--muted)}
 .note{font-size:14px;color:var(--muted);max-width:75ch}
 .warn{background:var(--warnbg);border-left:3px solid var(--accent);padding:8px 10px;font-size:14px;margin:8px 0;border-radius:3px}
@@ -224,7 +223,7 @@ footer{margin-top:22px;font-size:13px;color:var(--muted);display:flex;flex-wrap:
   </div>
 
   <section id="tab-days" class="panel" role="tabpanel" aria-labelledby="t-days">
-    <p class="note">Escribe el pronóstico oficial para la ciudad de Monterrey (SMN, Protección Civil o tu fuente de confianza) y la app lo ajusta a la zona elegida. Despejado y en calma agranda las diferencias entre zonas. El cielo de noche de los días del pronóstico automático viene del modelo y no se edita; en los días que escribes tú, elígelo en el menú.</p>
+    <p class="note">Escribe el pronóstico oficial para la ciudad de Monterrey (SMN, Protección Civil o tu fuente de confianza) y la app lo ajusta a la zona elegida. Despejado y en calma agranda las diferencias entre zonas. El cielo de noche sale siempre del pronóstico automático de cada fecha y no se puede cambiar; si una fecha no está en ese pronóstico, se supone nublado.</p>
     <div id="staleMsg"></div>
     <div class="scroll"><table id="daysTbl"></table></div>
     <div class="controls"><button type="button" id="fcBtn">Traer pronóstico automático</button><button type="button" id="addDay">Agregar día</button><button type="button" class="ghost" id="resetDays">Volver al pronóstico de ejemplo</button></div>
@@ -312,7 +311,7 @@ footer{margin-top:22px;font-size:13px;color:var(--muted);display:flex;flex-wrap:
     <h3>El invierno 2026-27</h3>
     <p><b>Temperatura:</b> regresión de 64 inviernos (1951-2013) entre el índice ONI y la temperatura invernal sin tendencia, más la tendencia de calentamiento extrapolada a 2027, simulada 200 000 veces con un ONI esperado de +2.4 ± 0.3 °C. <b>Lluvia:</b> distribución Gamma con mezcla de escenarios (80 % respuesta típica de El Niño, 20 % climatológica). <b>Frío extremo:</b> distribución Gumbel calibrada con la mínima media anual (1.1 °C) y el récord (−7.5 °C).</p>
     <p><b>Qué tan firme es la lluvia.</b> Los 71.6 mm de lluvia normal de diciembre a febrero son la normal oficial del SMN (1991-2020). Al contrastarla el 3 de octubre de 2026 con la serie diaria de la estación (38 mm) y con el reanálisis ERA5 (101 mm), las tres fuentes no coinciden en el nivel, así que toma las cifras en milímetros con mucha cautela. Lo que sí se sostiene es la proporción: en ambas fuentes, los inviernos con El Niño moderado llevan en promedio de 1.3 a 1.5 veces la lluvia de un invierno cualquiera (el modelo supone 1.4). Para un El Niño muy fuerte, como el esperado, solo hay 4 o 5 casos y no bastan para confirmarlo: según ERA5, en 1998 y 2016 llovió menos de lo normal.</p>
-    <p><b>Pronóstico automático.</b> Los próximos días pueden cargarse desde Open-Meteo, un modelo global del punto de Monterrey centro. Al compararlo con la estación entre 2022 y 2025 (589 días), la máxima salió en promedio 1.9 °C más baja (2.5 °C en invierno) y, en noches con la estación a 10 °C o menos, la mínima salió 1.5 °C más cálida. Ese sesgo no es estable: cambió en 2025, posiblemente por cambios en el registro de la estación, así que no se aplicó ninguna corrección automática. Lee el pronóstico automático como una referencia y, si tienes el pronóstico oficial, escribe a mano las temperaturas y la lluvia. El cielo de noche se clasifica por la nubosidad media de 00 a 08 h (despejado si es menor de 25 %, medio despejado menor de 50 %, medio nublado menor de 75 %, nublado en los demás casos) y se mezcla con la noche con frente según un peso de 1, ⅔, ⅓ o 0 para la noche despejada y en calma; con viento medio de 10 km/h o más la noche se trata como nublada. Esos pesos intermedios son una regla de la app, no un coeficiente calibrado. En los días que escribes a mano el cielo se elige en un menú; ahí no hay dato de viento.</p>
+    <p><b>Pronóstico automático.</b> Los próximos días pueden cargarse desde Open-Meteo, un modelo global del punto de Monterrey centro. Al compararlo con la estación entre 2022 y 2025 (589 días), la máxima salió en promedio 1.9 °C más baja (2.5 °C en invierno) y, en noches con la estación a 10 °C o menos, la mínima salió 1.5 °C más cálida. Ese sesgo no es estable: cambió en 2025, posiblemente por cambios en el registro de la estación, así que no se aplicó ninguna corrección automática. Lee el pronóstico automático como una referencia y, si tienes el pronóstico oficial, escribe a mano las temperaturas y la lluvia. El cielo de noche se clasifica por la nubosidad media de 00 a 08 h (despejado si es menor de 25 %, medio despejado menor de 50 %, medio nublado menor de 75 %, nublado en los demás casos) y se mezcla con la noche con frente según un peso de 1, ⅔, ⅓ o 0 para la noche despejada y en calma; con viento medio de 10 km/h o más la noche se trata como nublada. Esos pesos intermedios son una regla de la app, no un coeficiente calibrado. El cielo de cada día, también el de los días que escribes a mano, se toma del pronóstico automático de esa misma fecha y no se elige a mano; si la fecha no está en ese pronóstico, se supone nublado.</p>
     <h3>Límites</h3>
     <p>La serie histórica es regional y mensual; no permite contar heladas. El modelo de zonas se calibró con dos estaciones, y las ubicaciones del mapa son aproximadas. El nivel de la lluvia invernal es incierto: las fuentes difieren de 38 a 101 mm. Un pronóstico estacional da probabilidades; un solo frente ártico puede definir el invierno. Para alertas, sigue al SMN y a Protección Civil de Nuevo León.</p>
     <h3>Fuentes</h3>
@@ -370,10 +369,14 @@ var FC_MAX_EDAD_MS = 2*3600*1000;                  // el pronóstico automático
 var CLEAR_WIND = 10;
 var SKY = {nub:{t:"Nublado",i:"\u2601\uFE0F",w:0}, mnub:{t:"Medio nublado",i:"\uD83C\uDF25\uFE0F",w:1/3}, mdesp:{t:"Medio despejado",i:"\uD83C\uDF24\uFE0F",w:2/3}, desp:{t:"Despejado",i:"\u2600\uFE0F",w:1}};
 function skyOf(cloud){ return cloud<25?"desp":cloud<50?"mdesp":cloud<75?"mnub":"nub"; }
-function skyWeight(d){ var s=SKY[d.c]; var w=s?s.w:0; return (+d.v>=CLEAR_WIND)?0:w; }
-function skySelect(d,i){ var h='<select class="skysel" aria-label="Cielo de noche" data-i="'+i+'" data-k="c">'; ["nub","mnub","mdesp","desp"].forEach(function(k){ h+='<option value="'+k+'"'+(d.c===k?' selected':'')+'>'+SKY[k].i+' '+SKY[k].t+'</option>'; }); return h+'</select>'; }
-function skyCtl(d,i){ return d.src==="auto"?skyHtml(d):skySelect(d,i); }   // el cielo del pronóstico automático es de solo lectura; el de los días a mano se elige
-function skyHtml(d){ var s=SKY[d.c]||SKY.nub; return '<span class="skyro"><span aria-hidden="true">'+s.i+'</span> '+s.t+((+d.v>=CLEAR_WIND)?' <small>· con viento</small>':'')+'</span>'; }
+var SKYMAP = {};   // fecha -> {c, v}: cielo y viento del último pronóstico automático traído (se guarda en el teléfono)
+function skyRes(d){   // el cielo NUNCA se elige a mano: sale del pronóstico automático de esa fecha; sin dato, se supone nublado
+  var m=SKYMAP[d.d]; if(m&&SKY[m.c]) return {c:m.c,v:m.v,ns:false};
+  if(d.src==="auto"&&SKY[d.c]) return {c:d.c,v:d.v,ns:false};
+  return {c:"nub",v:undefined,ns:true};
+}
+function skyWeight(d){ var r=skyRes(d), s=SKY[r.c]; var w=s?s.w:0; return (+r.v>=CLEAR_WIND)?0:w; }
+function skyHtml(d){ var r=skyRes(d), s=SKY[r.c]||SKY.nub; return '<span class="skyro"><span aria-hidden="true">'+s.i+'</span> '+s.t+((+r.v>=CLEAR_WIND)?' <small>· con viento</small>':'')+(r.ns?' <small>· sin dato de cielo</small>':'')+'</span>'; }
 function parseForecast(j){
   try{
     var D=j.daily, H=j.hourly, out=[];
@@ -694,7 +697,7 @@ function renderDays(){
       '<td data-l="Máx. Monterrey"><input type="number" aria-label="Máxima en Monterrey, °C" data-i="'+i+'" data-k="tx" value="'+d.tx+'" step="0.5" min="-15" max="50"></td>'+
       '<td data-l="Mín. Monterrey"><input type="number" aria-label="Mínima en Monterrey, °C" data-i="'+i+'" data-k="tn" value="'+d.tn+'" step="0.5" min="-15" max="40"></td>'+
       '<td data-l="Lluvia mm"><input type="number" aria-label="Lluvia en Monterrey, mm" data-i="'+i+'" data-k="p" value="'+d.p+'" min="0" max="600" step="1"></td>'+
-      '<td class="wide" data-l="Cielo de noche">'+skyCtl(d,i)+'</td>'+
+      '<td class="wide" data-l="Cielo de noche">'+skyHtml(d)+'</td>'+
       '<td class="res" data-l="Máx. aquí"><span class="out" data-o="tx"></span></td>'+
       '<td class="res" data-l="Mín. aquí"><span class="out cold" data-o="tn"></span></td>'+
       '<td class="res" data-l="Lluvia aquí"><span class="out" data-o="p"></span></td>'+
@@ -734,8 +737,7 @@ daysTbl.addEventListener("input",function(ev){
     ev.target.removeAttribute("aria-invalid"); v=(k==="p")?Math.max(0,x):x;
   }
   if(k==="d" && !/^\d{4}-\d{2}-\d{2}$/.test(v)) return;
-  if(k==="c" && !SKY.hasOwnProperty(v)) return;
-  days[+i][k]=v; saveDays(); updateDayOutputs();
+  days[+i][k]=v; saveDays(); if(k==="d") refreshSky(+i); updateDayOutputs();
   if(+i===0 && document.getElementById("mapMetric").value==="day") drawPoints();
 });
 daysTbl.addEventListener("change",function(ev){ if(ev.target.tagName==="SELECT") ev.target.dispatchEvent(new Event("input",{bubbles:true})); });
@@ -911,6 +913,9 @@ function renderAll(){ renderZone(); drawPoints(); renderDays(); renderWinter(); 
 /* ---- Pronóstico automático: solo reemplaza los días si el usuario no los ha escrito a mano ---- */
 var fc=load("fc",null); if(!fc||typeof fc!=="object") fc={t:0,auto:true}; fc.t=+fc.t||0;
 var fcBusy=false;
+var fs=load("fcsky",null); if(fs&&typeof fs==="object") SKYMAP=fs;
+function guardarSky(nd){ var m={}, lim=Date.now()-30*864e5; Object.keys(SKYMAP).forEach(function(k){ if(new Date(k).getTime()>lim) m[k]=SKYMAP[k]; }); nd.forEach(function(x){ m[x.d]={c:x.c,v:x.v}; }); SKYMAP=m; save("fcsky",m); }
+function refreshSky(i){ var h=document.querySelector('[data-row="'+i+'"] .skyro'); if(h&&days[i]) h.outerHTML=skyHtml(days[i]); }
 function setFcMsg(txt){ var el=document.getElementById("fcStatus"); if(!el) return;
   el.textContent = txt || (fc.auto&&fc.t ? "Pronóstico automático de Open-Meteo para Monterrey centro, actualizado el "+fcLabel(fc.t)+". Es un modelo global, no el pronóstico oficial del SMN: úsalo como referencia. Frente a la estación oficial, la máxima automática suele salir de 1 a 3 °C más baja y, en noches muy frías, la mínima puede salir 1 a 1.5 °C más cálida." : "Días escritos a mano o de ejemplo. Usa «Traer pronóstico automático» para cargar el de Open-Meteo."); }
 function saveDays(){ save("days",days); fc.auto=false; save("fc",fc); setFcMsg(); }
@@ -918,7 +923,7 @@ function traerPronostico(){
   if(fcBusy) return; fcBusy=true; var b=document.getElementById("fcBtn"); if(b) b.disabled=true; setFcMsg("Consultando Open-Meteo…");
   var ctl=window.AbortController?new AbortController():null, to=setTimeout(function(){ if(ctl) ctl.abort(); },12000);
   fetch(FC_URL, ctl?{signal:ctl.signal}:{}).then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
-    .then(function(j){ var nd=parseForecast(j); if(!nd) throw new Error("vacío"); days=nd; save("days",days); fc={t:Date.now(),auto:true}; save("fc",fc); renderAll(); setFcMsg(); })
+    .then(function(j){ var nd=parseForecast(j); if(!nd) throw new Error("vacío"); guardarSky(nd); days=nd; save("days",days); fc={t:Date.now(),auto:true}; save("fc",fc); renderAll(); setFcMsg(); })
     .catch(function(){ setFcMsg("No se pudo obtener el pronóstico automático (sin conexión o servicio no disponible). Se conservan los días actuales."); })
     .then(function(){ clearTimeout(to); fcBusy=false; if(b) b.disabled=false; });
 }
