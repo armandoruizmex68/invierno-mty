@@ -628,14 +628,18 @@ function drawPoints(){
   var reliefLabels=RELIEF.map(function(r){ return {q:proj(r[0],r[1]),n:r[5]}; });
   var sm=proj(25.47,-100.47); if(viewName==="all"){ var ts=el("text",{x:sm[0],y:sm[1],"text-anchor":"middle","font-size":px2u(11),fill:"var(--panel)","font-style":"italic",opacity:"0.9"},decoLayer); ts.textContent="Sierra Madre Oriental"; }
   var kmU=MAP.sx/111.32, km=(viewName==="all")?10:2, bx=vx+px2u(14), by=vy+vh-px2u(14);
-  el("rect",{x:bx-px2u(4),y:by-px2u(16),width:km*kmU+px2u(8)+px2u(30),height:px2u(22),fill:"var(--panel)",opacity:"0.75",rx:px2u(3)},decoLayer);
-  el("rect",{x:bx,y:by-px2u(1),width:km*kmU,height:px2u(2),fill:"var(--ink)"},decoLayer);
-  el("rect",{x:bx-px2u(0.75),y:by-px2u(4),width:px2u(1.5),height:px2u(4.5),fill:"var(--ink)"},decoLayer);
-  el("rect",{x:bx+km*kmU-px2u(0.75),y:by-px2u(4),width:px2u(1.5),height:px2u(4.5),fill:"var(--ink)"},decoLayer);
-  var st=el("text",{x:bx+km*kmU+px2u(5),y:by+px2u(3.5),"font-size":px2u(10.5),fill:"var(--ink)"},decoLayer); st.textContent=km+" km";
-  var nx=vx+vw-px2u(18), ny=vy+px2u(16);
-  el("path",{d:"M"+nx+","+(ny-px2u(8))+"L"+(nx+px2u(5))+","+(ny+px2u(5))+"L"+nx+","+(ny+px2u(2))+"L"+(nx-px2u(5))+","+(ny+px2u(5))+"Z",fill:"var(--ink)"},decoLayer);
-  var nt=el("text",{x:nx,y:ny+px2u(17),"text-anchor":"middle","font-size":px2u(10),fill:"var(--ink)","font-weight":"700"},decoLayer); nt.textContent="N";
+  // Escala y norte: placa SIEMPRE oscura con barra y letras claras. El oscurecimiento forzado de algunos navegadores (Samsung Internet)
+  // oscurece los fondos claros pero deja igual los oscuros y el texto claro: con colores fijos se ve igual en cualquier modo.
+  var SC_BG="#16232c", SC_BAR="#b8c4be", SC_TX="#f7f9f8";
+  el("rect",{x:bx-px2u(4),y:by-px2u(16),width:km*kmU+px2u(8)+px2u(34),height:px2u(22),fill:SC_BG,opacity:"0.82",rx:px2u(3)},decoLayer);
+  el("rect",{x:bx,y:by-px2u(1),width:km*kmU,height:px2u(2),fill:SC_BAR},decoLayer);
+  el("rect",{x:bx-px2u(0.75),y:by-px2u(4),width:px2u(1.5),height:px2u(4.5),fill:SC_BAR},decoLayer);
+  el("rect",{x:bx+km*kmU-px2u(0.75),y:by-px2u(4),width:px2u(1.5),height:px2u(4.5),fill:SC_BAR},decoLayer);
+  var st=el("text",{x:bx+km*kmU+px2u(5),y:by+px2u(3.5),"font-size":px2u(10.5),"font-weight":"600",fill:SC_TX},decoLayer); st.textContent=km+" km";
+  var nx=vx+vw-px2u(19), ny=vy+px2u(17);
+  el("circle",{cx:nx,cy:ny+px2u(4),r:px2u(17),fill:SC_BG,opacity:"0.82"},decoLayer);
+  el("path",{d:"M"+nx+","+(ny-px2u(8))+"L"+(nx+px2u(5))+","+(ny+px2u(5))+"L"+nx+","+(ny+px2u(2))+"L"+(nx-px2u(5))+","+(ny+px2u(5))+"Z",fill:SC_BAR},decoLayer);
+  var nt=el("text",{x:nx,y:ny+px2u(17),"text-anchor":"middle","font-size":px2u(10),fill:SC_TX,"font-weight":"700"},decoLayer); nt.textContent="N";
   // puntos y etiquetas con colocación automática
   ptLayer.innerHTML="";
   var R=px2u(6.5), Ron=px2u(9.5), F=px2u(11.5), Fon=px2u(13.5), boxes=[];
