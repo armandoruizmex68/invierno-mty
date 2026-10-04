@@ -21,7 +21,7 @@ h1{font:600 24px "Barlow Condensed",sans-serif;margin:0 0 6px}
 .h2 i{display:block;width:70px;height:6px;border-bottom:2px solid #b8c4be;border-left:1.5px solid #b8c4be;border-right:1.5px solid #b8c4be;box-sizing:border-box}
 </style></head><body>
 <h1>Prueba de la escala del mapa</h1>
-<div class="n"><b>Con el modo oscuro del navegador ACTIVADO</b>, mira cada recuadro (E1 a E8). Todos dibujan una escala «2 km» sobre el mismo fondo de mapa.<br>Dime <b>cuáles se ven completos</b> (barra y letras) y cuáles no se ven o se ven a medias.</div>
+<div class="n"><b>Con el modo oscuro del navegador ACTIVADO</b>, mira cada recuadro (E1 a E11). Todos dibujan una escala «2 km» sobre el mismo fondo de mapa.<br>Dime <b>cuáles se ven completos</b> (barra y letras) y cuáles no se ven o se ven a medias.</div>
 <div class="r">E1 · SVG: placa oscura fija, barra y letras claras (lo que está publicado)</div>
 <div class="f"><svg viewBox="0 0 320 64"><rect x="6" y="34" width="150" height="24" rx="3" fill="#16232c" opacity="0.82"/><rect x="14" y="45" width="70" height="2" fill="#b8c4be"/><rect x="13.25" y="40" width="1.5" height="8" fill="#b8c4be"/><rect x="83.25" y="40" width="1.5" height="8" fill="#b8c4be"/><text x="92" y="50" font-size="13" font-weight="600" fill="#f7f9f8" font-family="'Source Sans 3',sans-serif">2 km</text></svg></div>
 <div class="r">E2 · SVG: placa clara, barra y letras oscuras (versión anterior)</div>
@@ -38,4 +38,10 @@ h1{font:600 24px "Barlow Condensed",sans-serif;margin:0 0 6px}
 <div class="f"><div class="h2"><i></i>2 km</div></div>
 <div class="r">E8 · SVG: solo texto, barra con caracteres «▬▬▬▬ 2 km» (sin placa)</div>
 <div class="f"><svg viewBox="0 0 320 64"><text x="14" y="52" font-size="14" font-weight="700" fill="#16232c" font-family="'Source Sans 3',sans-serif">▬▬▬▬▬ 2 km</text></svg></div>
+<div class="r">E9 · SVG como E1, dentro de un grupo con aria-hidden Y pointer-events=none (como la capa de decoración del mapa)</div>
+<div class="f"><svg viewBox="0 0 320 64"><g aria-hidden="true" pointer-events="none"><rect x="6" y="34" width="150" height="24" rx="3" fill="#16232c" opacity="0.82"/><rect x="14" y="45" width="70" height="2" fill="#b8c4be"/><rect x="13.25" y="40" width="1.5" height="8" fill="#b8c4be"/><rect x="83.25" y="40" width="1.5" height="8" fill="#b8c4be"/><text x="92" y="50" font-size="13" font-weight="600" fill="#f7f9f8" font-family="'Source Sans 3',sans-serif">2 km</text></g></svg></div>
+<div class="r">E10 · SVG como E1, dentro de un grupo con solo pointer-events=none</div>
+<div class="f"><svg viewBox="0 0 320 64"><g pointer-events="none"><rect x="6" y="34" width="150" height="24" rx="3" fill="#16232c" opacity="0.82"/><rect x="14" y="45" width="70" height="2" fill="#b8c4be"/><rect x="13.25" y="40" width="1.5" height="8" fill="#b8c4be"/><rect x="83.25" y="40" width="1.5" height="8" fill="#b8c4be"/><text x="92" y="50" font-size="13" font-weight="600" fill="#f7f9f8" font-family="'Source Sans 3',sans-serif">2 km</text></g></svg></div>
+<div class="r">E11 · SVG como E1, dentro de un grupo con solo aria-hidden</div>
+<div class="f"><svg viewBox="0 0 320 64"><g aria-hidden="true"><rect x="6" y="34" width="150" height="24" rx="3" fill="#16232c" opacity="0.82"/><rect x="14" y="45" width="70" height="2" fill="#b8c4be"/><rect x="13.25" y="40" width="1.5" height="8" fill="#b8c4be"/><rect x="83.25" y="40" width="1.5" height="8" fill="#b8c4be"/><text x="92" y="50" font-size="13" font-weight="600" fill="#f7f9f8" font-family="'Source Sans 3',sans-serif">2 km</text></g></svg></div>
 </body></html>
