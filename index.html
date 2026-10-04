@@ -634,7 +634,7 @@ function drawPoints(){
   var draw=[];
   order.forEach(function(z){
     var q=proj(z.lat,z.lon), on=(z.id===cur), f=on?Fon:F, txt=(z.ln||z.n.replace(" centro",""))+(showVals?"  "+shortVal(vals[ZONES.indexOf(z)],k):"");
-    var tw=textW(txt,f,on?"700":"500")+px2u(1.5), th=f, gap=(on?Ron:R)+px2u(3), lab=null;
+    var tw=textW(txt,f,on?"700":"500")+px2u(6), th=f*1.1, gap=(on?Ron:R)+px2u(3), lab=null;
     var cands=[[gap,th*0.35,"start"],[-gap,th*0.35,"end"],[-tw/2,-gap-th*0.15,"mid"],[-tw/2,gap+th*0.8,"mid"],[gap*0.8,-gap*0.6,"start"],[gap*0.8,gap+th*0.4,"start"],[-gap*0.8,-gap*0.6,"end"],[-gap*0.8,gap+th*0.4,"end"]];
     for(var i=0;i<cands.length;i++){
       var c=cands[i], x0=c[2]==="start"?q[0]+c[0]:c[2]==="end"?q[0]+c[0]-tw:q[0]+c[0], y0=q[1]+c[1]-th*0.8, b=[x0,y0,x0+tw,y0+th];
@@ -665,10 +665,11 @@ function drawPoints(){
     if(z.id===HOME) el("circle",{cx:d.q[0],cy:d.q[1],r:(d.on?Ron:R)+px2u(4.5),fill:"none",stroke:"var(--accent)","stroke-width":px2u(3)},g);
     el("circle",{class:"dot",cx:d.q[0],cy:d.q[1],r:d.on?Ron:R,fill:colorAt(tOf(v)),stroke:d.on?"var(--sel)":"var(--panel)","stroke-width":px2u(d.on?3:1.6)},g);
     if(d.lab){
-      // Halo con copias de RELLENO desplazadas (no con stroke): el oscurecimiento forzado de algunos navegadores (Samsung Internet)
-      // transforma los rellenos pero no los contornos, y un halo hecho con stroke se fundía con la letra.
-      var hr=px2u(1.5), wt=d.on?"700":"500";
-      for(var ai=0;ai<8;ai++){ var ar=ai*Math.PI/4; var ht=el("text",{x:d.lab.x+hr*Math.cos(ar),y:d.lab.y+hr*Math.sin(ar),"text-anchor":d.lab.a,"font-size":d.f,"font-weight":wt,fill:"var(--panel)","aria-hidden":"true","pointer-events":"none"},g); ht.textContent=d.txt; }
+      // Placa de fondo (rect) detrás del texto, no un halo: el modo oscuro forzado (Samsung Internet) aclara TODO el texto,
+      // así que un halo de texto o de contorno se funde con la letra; un rect de fondo sí se oscurece y la letra clara se lee sobre él.
+      var wt=d.on?"700":"500", tw0=textW(d.txt,d.f,wt), pad=px2u(3);
+      var x0=d.lab.a==="start"?d.lab.x:d.lab.a==="end"?d.lab.x-tw0:d.lab.x-tw0/2;
+      el("rect",{x:x0-pad,y:d.lab.y-d.f*0.82-px2u(1),width:tw0+2*pad,height:d.f*1.1+px2u(2),rx:px2u(3),fill:"var(--panel)",opacity:"0.8","aria-hidden":"true","pointer-events":"none"},g);
       var tx=el("text",{class:"zl"+(d.on?" on":""),x:d.lab.x,y:d.lab.y,"text-anchor":d.lab.a,"font-size":d.f,"font-weight":wt,fill:"var(--ink)"},g); tx.textContent=d.txt;
     }
     var ti=el("title",{},g); ti.textContent=z.n+": "+fmtMetric(v,k);
