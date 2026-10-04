@@ -183,6 +183,7 @@ footer{margin-top:22px;font-size:13px;color:var(--muted);display:flex;flex-wrap:
           <option value="tmaxJan">Máxima media de enero</option>
           <option value="rain">Lluvia dic-feb pronosticada</option>
           <option value="day">Mínima del primer día de la tabla</option>
+          <option value="alt">Altitud sobre el nivel del mar</option>
         </select>
         <label style="display:inline-flex;gap:6px;align-items:center"><input type="checkbox" id="showVals" checked> Valores en el mapa</label>
       </div>
@@ -290,6 +291,7 @@ footer{margin-top:22px;font-size:13px;color:var(--muted);display:flex;flex-wrap:
         <option value="ext">Noche más fría probable del invierno</option>
         <option value="frost">Probabilidad de helada</option>
         <option value="rain">Lluvia dic-feb</option>
+        <option value="alt">Altitud sobre el nivel del mar</option>
         <option value="tminJan">Mínima media de enero</option>
         <option value="tmaxJan">Máxima media de enero</option>
       </select>
@@ -444,20 +446,22 @@ function metric(z,k){
   if(k==="tmaxJan") return MONTHS[2].tx+o.tx;
   if(k==="tminJan") return MONTHS[2].tn+o.nino;
   if(k==="day") return days.length? dayMin(days[0],o) : null;
+  if(k==="alt") return z.e;
   return null;
 }
-function fmtMetric(v,k){ if(v===null) return "sin datos"; if(k==="frost") return pct(v); if(k==="rain") return Math.round(v)+" mm"; return f1(v)+" °C"; }
-var METRIC_TXT={ext:"noche más fría probable",frost:"probabilidad de helada",rain:"lluvia dic-feb",tmaxJan:"máxima media de enero",tminJan:"mínima media de enero"};
+function fmtMetric(v,k){ if(v===null) return "sin datos"; if(k==="alt") return Math.round(v)+" m"; if(k==="frost") return pct(v); if(k==="rain") return Math.round(v)+" mm"; return f1(v)+" °C"; }
+var METRIC_TXT={ext:"noche más fría probable",frost:"probabilidad de helada",rain:"lluvia dic-feb",tmaxJan:"máxima media de enero",tminJan:"mínima media de enero",alt:"altitud sobre el nivel del mar (m)"};
 // Escalas fijas (no se estiran al mínimo y máximo) y paletas distintas por tipo de dato
 var PAL={temp:[[45,110,163],[143,192,222],[241,227,166],[229,154,77],[196,90,44]],
          frost:[[244,247,250],[176,206,230],[92,150,201],[37,92,150],[18,48,94]],
-         rain:[[246,243,232],[196,224,214],[118,184,181],[47,128,141],[22,78,99]]};
+         rain:[[246,243,232],[196,224,214],[118,184,181],[47,128,141],[22,78,99]],
+         alt:[[232,240,222],[192,214,170],[222,196,128],[176,128,84],[104,70,52]]};
 var SCALE={ext:{lo:-3,hi:3,pal:"temp"},tminJan:{lo:5,hi:12,pal:"temp"},tmaxJan:{lo:17,hi:25,pal:"temp"},
-           frost:{lo:0,hi:1,pal:"frost"},rain:{lo:60,hi:110,pal:"rain"},day:{lo:null,hi:null,pal:"temp"}};
+           frost:{lo:0,hi:1,pal:"frost"},rain:{lo:60,hi:110,pal:"rain"},day:{lo:null,hi:null,pal:"temp"},alt:{lo:300,hi:850,pal:"alt"}};
 function palAt(name,t){ var S=PAL[name]; t=Math.max(0,Math.min(1,t)); var x=t*(S.length-1), i=Math.min(S.length-2,Math.floor(x)), f=x-i, a=S[i], b=S[i+1];
   return "rgb("+a.map(function(v,j){return Math.round(v+(b[j]-v)*f);}).join(",")+")"; }
 function palCSS(name){ return "linear-gradient(90deg,"+PAL[name].map(function(c){return "rgb("+c.join(",")+")";}).join(",")+")"; }
-function shortVal(v,k){ if(v===null) return ""; if(k==="frost") return pct(v); if(k==="rain") return Math.round(v)+" mm"; return f1(v)+"°"; }
+function shortVal(v,k){ if(v===null) return ""; if(k==="alt") return Math.round(v)+" m"; if(k==="frost") return pct(v); if(k==="rain") return Math.round(v)+" mm"; return f1(v)+"°"; }
 
 
 
@@ -879,7 +883,7 @@ function renderRank(){
   var h='<div class="row hd" aria-hidden="true"><span>Zona</span><span></span><span style="text-align:right">Valor</span><span class="d">vs. Monterrey centro</span></div>';
   arr.forEach(function(a){
     var w=(a.v-base)/((hi-base)||1), sc=SCALE[k], t=(a.v-sc.lo)/(sc.hi-sc.lo), bc=palAt(sc.pal,t);
-    var diff = k==="frost" ? sgnPts(a.v-hv) : k==="rain" ? sgnInt(a.v-hv)+" mm" : sgn(a.v-hv)+" °C";
+    var diff = k==="frost" ? sgnPts(a.v-hv) : k==="rain" ? sgnInt(a.v-hv)+" mm" : k==="alt" ? sgnInt(a.v-hv)+" m" : sgn(a.v-hv)+" °C";
     h+='<div class="row'+(a.z.id===cur?' on':'')+'" data-id="'+a.z.id+'" tabindex="0" role="button" aria-label="'+esc(a.z.n)+', '+fmtMetric(a.v,k)+'"><span>'+esc(a.z.n)+(a.z.id===HOME?' <span class="home-tag">Referencia</span>':'')+'</span><div class="b" style="width:'+Math.max(2,w*100).toFixed(1)+'%;background:'+bc+'"></div><b style="text-align:right">'+fmtMetric(a.v,k)+'</b><span class="d">'+(a.z.id===HOME?"":diff)+'</span></div>';
   });
   document.getElementById("rank").innerHTML=h;
