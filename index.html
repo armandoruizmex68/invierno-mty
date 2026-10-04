@@ -618,9 +618,9 @@ function drawPoints(){
   var sm=proj(25.47,-100.47); if(viewName==="all"){ var ts=el("text",{x:sm[0],y:sm[1],"text-anchor":"middle","font-size":px2u(11),fill:"var(--panel)","font-style":"italic",opacity:"0.9"},decoLayer); ts.textContent="Sierra Madre Oriental"; }
   var kmU=MAP.sx/111.32, km=(viewName==="all")?10:2, bx=vx+px2u(14), by=vy+vh-px2u(14);
   el("rect",{x:bx-px2u(4),y:by-px2u(16),width:km*kmU+px2u(8)+px2u(30),height:px2u(22),fill:"var(--panel)",opacity:"0.75",rx:px2u(3)},decoLayer);
-  el("line",{x1:bx,x2:bx+km*kmU,y1:by,y2:by,stroke:"var(--ink)","stroke-width":px2u(2)},decoLayer);
-  el("line",{x1:bx,x2:bx,y1:by-px2u(4),y2:by+px2u(0.5),stroke:"var(--ink)","stroke-width":px2u(1.5)},decoLayer);
-  el("line",{x1:bx+km*kmU,x2:bx+km*kmU,y1:by-px2u(4),y2:by+px2u(0.5),stroke:"var(--ink)","stroke-width":px2u(1.5)},decoLayer);
+  el("rect",{x:bx,y:by-px2u(1),width:km*kmU,height:px2u(2),fill:"var(--ink)"},decoLayer);
+  el("rect",{x:bx-px2u(0.75),y:by-px2u(4),width:px2u(1.5),height:px2u(4.5),fill:"var(--ink)"},decoLayer);
+  el("rect",{x:bx+km*kmU-px2u(0.75),y:by-px2u(4),width:px2u(1.5),height:px2u(4.5),fill:"var(--ink)"},decoLayer);
   var st=el("text",{x:bx+km*kmU+px2u(5),y:by+px2u(3.5),"font-size":px2u(10.5),fill:"var(--ink)"},decoLayer); st.textContent=km+" km";
   var nx=vx+vw-px2u(18), ny=vy+px2u(16);
   el("path",{d:"M"+nx+","+(ny-px2u(8))+"L"+(nx+px2u(5))+","+(ny+px2u(5))+"L"+nx+","+(ny+px2u(2))+"L"+(nx-px2u(5))+","+(ny+px2u(5))+"Z",fill:"var(--ink)"},decoLayer);
@@ -664,7 +664,13 @@ function drawPoints(){
     el("circle",{cx:d.q[0],cy:d.q[1],r:px2u(16),fill:"transparent"},g);
     if(z.id===HOME) el("circle",{cx:d.q[0],cy:d.q[1],r:(d.on?Ron:R)+px2u(4.5),fill:"none",stroke:"var(--accent)","stroke-width":px2u(3)},g);
     el("circle",{class:"dot",cx:d.q[0],cy:d.q[1],r:d.on?Ron:R,fill:colorAt(tOf(v)),stroke:d.on?"var(--sel)":"var(--panel)","stroke-width":px2u(d.on?3:1.6)},g);
-    if(d.lab){ var tx=el("text",{class:"zl"+(d.on?" on":""),x:d.lab.x,y:d.lab.y,"text-anchor":d.lab.a,"font-size":d.f,"font-weight":d.on?"700":"500",fill:"var(--ink)",stroke:"var(--panel)","stroke-width":px2u(3),"paint-order":"stroke"},g); tx.textContent=d.txt; }
+    if(d.lab){
+      // Halo con copias de RELLENO desplazadas (no con stroke): el oscurecimiento forzado de algunos navegadores (Samsung Internet)
+      // transforma los rellenos pero no los contornos, y un halo hecho con stroke se fundía con la letra.
+      var hr=px2u(1.5), wt=d.on?"700":"500";
+      for(var ai=0;ai<8;ai++){ var ar=ai*Math.PI/4; var ht=el("text",{x:d.lab.x+hr*Math.cos(ar),y:d.lab.y+hr*Math.sin(ar),"text-anchor":d.lab.a,"font-size":d.f,"font-weight":wt,fill:"var(--panel)","aria-hidden":"true","pointer-events":"none"},g); ht.textContent=d.txt; }
+      var tx=el("text",{class:"zl"+(d.on?" on":""),x:d.lab.x,y:d.lab.y,"text-anchor":d.lab.a,"font-size":d.f,"font-weight":wt,fill:"var(--ink)"},g); tx.textContent=d.txt;
+    }
     var ti=el("title",{},g); ti.textContent=z.n+": "+fmtMetric(v,k);
   });
 }
