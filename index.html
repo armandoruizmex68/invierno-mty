@@ -106,6 +106,16 @@ details.adj[open] summary::after{content:"－"}
 .seg button{border:0;background:transparent;min-height:42px;font-weight:600;font-size:14px;padding:6px 8px;color:var(--ink)}
 .seg button[aria-pressed=true]{background:var(--ink);color:var(--panel)}
 .seg.sky button{min-height:44px;padding:4px 2px;font-size:13px}
+.mapov{position:absolute;left:0;top:0;right:0;bottom:0;pointer-events:none;overflow:hidden;font-family:"Source Sans 3",sans-serif}
+.mlab{position:absolute;white-space:nowrap;font-size:11.5px;font-weight:500;line-height:1.2;padding:1px 3px;border-radius:3px;background:var(--chipbg);color:var(--ink);pointer-events:auto;cursor:pointer}
+.mlab.on{font-size:13.5px;font-weight:700}
+.mapwrap.picking .mlab{pointer-events:none}
+.mscale{position:absolute;left:8px;bottom:8px;display:flex;align-items:center;gap:6px;background:var(--chipbg);color:var(--ink);border-radius:4px;padding:4px 7px;font-size:12px;line-height:1}
+.mscale b{font-weight:700}
+.mbar{display:inline-block;overflow:hidden;white-space:nowrap;font-size:8px;line-height:1;letter-spacing:-1px;color:var(--ink)}
+.mnorth{position:absolute;right:5px;top:5px;width:27px;height:27px;border-radius:50%;background:var(--chipbg);color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;font-size:9px}
+.mnorth b{font-weight:700}
+:root{--chipbg:rgba(247,249,248,.82)}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--chipbg:rgba(27,37,43,.82)}}:root[data-theme="dark"]{--chipbg:rgba(27,37,43,.82)}:root[data-theme="light"]{--chipbg:rgba(247,249,248,.82)}
 .skyro{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;border:1px solid var(--line);border-radius:10px;font-size:14px;font-weight:600;line-height:1.2}.skyro small{font-weight:400;color:var(--muted)}
 .field{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
 .field>span{font-size:12px;color:var(--muted)}
@@ -556,7 +566,11 @@ view=VIEWS.core.slice(); viewName="core";
 function storeEdit(){ var z=BYID[cur]; if(z.e===z.e0&&z.t===z.t0&&z.lat===z.lat0&&z.lon===z.lon0) delete edits[cur]; else edits[cur]={e:z.e,t:z.t,lat:z.lat,lon:z.lon}; save("edits",edits); renderAll(); }
 function select(id,keepFocus){ if(!BYID[id]) return; cur=id; save("zone",id); renderAll(); if(keepFocus&&ptLayer){ var g=ptLayer.querySelector('[data-id="'+id+'"]'); if(g) g.focus(); } }
 
-var _medidor=null, _anchos={};
+var _medidor=null, _anchos={}, ovl=null, _rz=null;
+// Capa HTML sobre el SVG (etiquetas de zona, escala y norte). Medido en un Galaxy con el modo oscuro forzado de Samsung Internet: los colores del SVG se
+// comprimen hacia un gris medio (placas claras siguen claras, oscuras se aclaran, texto blanco: contraste 1.9-3.3:1), mientras que los elementos HTML
+// se oscurecen bien (caja clara -> oscura con letra blanca). Por eso lo que debe leerse va en HTML.
+function ovGeom(){ var r=document.getElementById("map").getBoundingClientRect(), w=r.width||640, h=r.height||642, s=Math.min(w/view[2],h/view[3]); return {s:s, ox:(w-view[2]*s)/2, oy:(h-view[3]*s)/2}; }
 function textW(txt,f,peso){
   // ancho real del texto con la fuente que dibuja el navegador (si falla, estimación)
   var key=txt+"|"+f.toFixed(2)+"|"+peso; if(_anchos[key]!==undefined) return _anchos[key];
@@ -571,6 +585,8 @@ function textW(txt,f,peso){
 }
 function buildMap(){
   var svg=document.getElementById("map"); svg.innerHTML=""; _medidor=null;
+  ovl=document.getElementById("mapOv"); if(!ovl){ ovl=document.createElement("div"); ovl.id="mapOv"; ovl.className="mapov"; ovl.setAttribute("aria-hidden","true"); svg.parentNode.appendChild(ovl); }
+  ovl.innerHTML=""; ovl.onclick=function(ev){ if(picking) return; var l=ev.target.closest&&ev.target.closest("[data-id]"); if(l) select(l.getAttribute("data-id")); };
   var defs=el("defs",{},svg);
   var rg=el("radialGradient",{id:"hill",cx:"40%",cy:"35%",r:"70%"},defs);
   el("stop",{offset:"0%","stop-color":"var(--sierra2)"},rg); el("stop",{offset:"100%","stop-color":"var(--sierra)"},rg);
@@ -628,18 +644,13 @@ function drawPoints(){
   var reliefLabels=RELIEF.map(function(r){ return {q:proj(r[0],r[1]),n:r[5]}; });
   var sm=proj(25.47,-100.47); if(viewName==="all"){ var ts=el("text",{x:sm[0],y:sm[1],"text-anchor":"middle","font-size":px2u(11),fill:"var(--panel)","font-style":"italic",opacity:"0.9"},decoLayer); ts.textContent="Sierra Madre Oriental"; }
   var kmU=MAP.sx/111.32, km=(viewName==="all")?10:2, bx=vx+px2u(14), by=vy+vh-px2u(14);
-  // Escala y norte: placa SIEMPRE oscura con barra y letras claras. El oscurecimiento forzado de algunos navegadores (Samsung Internet)
-  // oscurece los fondos claros pero deja igual los oscuros y el texto claro: con colores fijos se ve igual en cualquier modo.
-  var SC_BG="#16232c", SC_BAR="#b8c4be", SC_TX="#f7f9f8";
-  el("rect",{x:bx-px2u(4),y:by-px2u(16),width:km*kmU+px2u(8)+px2u(34),height:px2u(22),fill:SC_BG,opacity:"0.82",rx:px2u(3)},decoLayer);
-  el("rect",{x:bx,y:by-px2u(1),width:km*kmU,height:px2u(2),fill:SC_BAR},decoLayer);
-  el("rect",{x:bx-px2u(0.75),y:by-px2u(4),width:px2u(1.5),height:px2u(4.5),fill:SC_BAR},decoLayer);
-  el("rect",{x:bx+km*kmU-px2u(0.75),y:by-px2u(4),width:px2u(1.5),height:px2u(4.5),fill:SC_BAR},decoLayer);
-  var st=el("text",{x:bx+km*kmU+px2u(5),y:by+px2u(3.5),"font-size":px2u(10.5),"font-weight":"600",fill:SC_TX},decoLayer); st.textContent=km+" km";
-  var nx=vx+vw-px2u(19), ny=vy+px2u(17);
-  el("circle",{cx:nx,cy:ny+px2u(4),r:px2u(17),fill:SC_BG,opacity:"0.82"},decoLayer);
-  el("path",{d:"M"+nx+","+(ny-px2u(8))+"L"+(nx+px2u(5))+","+(ny+px2u(5))+"L"+nx+","+(ny+px2u(2))+"L"+(nx-px2u(5))+","+(ny+px2u(5))+"Z",fill:SC_BAR},decoLayer);
-  var nt=el("text",{x:nx,y:ny+px2u(17),"text-anchor":"middle","font-size":px2u(10),fill:SC_TX,"font-weight":"700"},decoLayer); nt.textContent="N";
+  // Escala y norte: HTML sobre el mapa (ver ovGeom)
+  var kmU=MAP.sx/111.32, km=(viewName==="all")?10:2;
+  ovl.innerHTML=""; ovl.style.visibility="visible";
+  var G0=ovGeom(), escDiv=document.createElement("div"); escDiv.className="mscale";
+  var bar=document.createElement("span"); bar.className="mbar"; bar.style.width=(km*kmU*G0.s).toFixed(1)+"px"; bar.textContent=new Array(150).join("\u25AC");
+  var lb=document.createElement("b"); lb.textContent=km+" km"; escDiv.appendChild(bar); escDiv.appendChild(lb); ovl.appendChild(escDiv);
+  var nn=document.createElement("div"); nn.className="mnorth"; nn.innerHTML='<span>\u25B2</span><b>N</b>'; ovl.appendChild(nn);
   // puntos y etiquetas con colocación automática
   ptLayer.innerHTML="";
   var R=px2u(6.5), Ron=px2u(9.5), F=px2u(11.5), Fon=px2u(13.5), boxes=[];
@@ -649,7 +660,7 @@ function drawPoints(){
   var draw=[];
   order.forEach(function(z){
     var q=proj(z.lat,z.lon), on=(z.id===cur), f=on?Fon:F, txt=(z.ln||z.n.replace(" centro",""))+(showVals?"  "+shortVal(vals[ZONES.indexOf(z)],k):"");
-    var tw=textW(txt,f,on?"700":"500")+px2u(6), th=f*1.1, gap=(on?Ron:R)+px2u(3), lab=null;
+    var tw=textW(txt,f,on?"700":"500")+px2u(9), th=f*1.3, gap=(on?Ron:R)+px2u(3), lab=null;
     var cands=[[gap,th*0.35,"start"],[-gap,th*0.35,"end"],[-tw/2,-gap-th*0.15,"mid"],[-tw/2,gap+th*0.8,"mid"],[gap*0.8,-gap*0.6,"start"],[gap*0.8,gap+th*0.4,"start"],[-gap*0.8,-gap*0.6,"end"],[-gap*0.8,gap+th*0.4,"end"]];
     for(var i=0;i<cands.length;i++){
       var c=cands[i], x0=c[2]==="start"?q[0]+c[0]:c[2]==="end"?q[0]+c[0]-tw:q[0]+c[0], y0=q[1]+c[1]-th*0.8, b=[x0,y0,x0+tw,y0+th];
@@ -680,12 +691,13 @@ function drawPoints(){
     if(z.id===HOME) el("circle",{cx:d.q[0],cy:d.q[1],r:(d.on?Ron:R)+px2u(4.5),fill:"none",stroke:"var(--accent)","stroke-width":px2u(3)},g);
     el("circle",{class:"dot",cx:d.q[0],cy:d.q[1],r:d.on?Ron:R,fill:colorAt(tOf(v)),stroke:d.on?"var(--sel)":"var(--panel)","stroke-width":px2u(d.on?3:1.6)},g);
     if(d.lab){
-      // Placa de fondo (rect) detrás del texto, no un halo: el modo oscuro forzado (Samsung Internet) aclara TODO el texto,
-      // así que un halo de texto o de contorno se funde con la letra; un rect de fondo sí se oscurece y la letra clara se lee sobre él.
-      var wt=d.on?"700":"500", tw0=textW(d.txt,d.f,wt), pad=px2u(3);
-      var x0=d.lab.a==="start"?d.lab.x:d.lab.a==="end"?d.lab.x-tw0:d.lab.x-tw0/2;
-      el("rect",{x:x0-pad,y:d.lab.y-d.f*0.82-px2u(1),width:tw0+2*pad,height:d.f*1.1+px2u(2),rx:px2u(3),fill:"var(--panel)",opacity:"0.8","aria-hidden":"true","pointer-events":"none"},g);
-      var tx=el("text",{class:"zl"+(d.on?" on":""),x:d.lab.x,y:d.lab.y,"text-anchor":d.lab.a,"font-size":d.f,"font-weight":wt,fill:"var(--ink)"},g); tx.textContent=d.txt;
+      var G=ovGeom(), p=[G.ox+(d.lab.x-view[0])*G.s, G.oy+(d.lab.y-view[1])*G.s], fpx=d.on?13.5:11.5, lab=document.createElement("div");
+      lab.className="mlab"+(d.on?" on":""); lab.setAttribute("data-id",z.id); lab.textContent=d.txt;
+      lab.style.top=(p[1]-1-0.955*fpx).toFixed(1)+"px";
+      if(d.lab.a==="end"){ lab.style.left=(p[0]+3).toFixed(1)+"px"; lab.style.transform="translateX(-100%)"; }
+      else if(d.lab.a==="middle"){ lab.style.left=p[0].toFixed(1)+"px"; lab.style.transform="translateX(-50%)"; }
+      else lab.style.left=(p[0]-3).toFixed(1)+"px";
+      ovl.appendChild(lab);
     }
     var ti=el("title",{},g); ti.textContent=z.n+": "+fmtMetric(v,k);
   });
@@ -696,6 +708,7 @@ function setView(name){
   document.getElementById("vCore").setAttribute("aria-pressed",name==="core"?"true":"false");
   var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if(reduce){ view=target.slice(); drawPoints(); return; }
+  if(ovl) ovl.style.visibility="hidden";
   function step(ts){ if(!t0) t0=ts; var p=Math.min(1,(ts-t0)/350), e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;
     view=start.map(function(v,i){return v+(target[i]-v)*e;});
     document.getElementById("map").setAttribute("viewBox",view.join(" "));
@@ -717,6 +730,8 @@ var rsT=null; window.addEventListener("resize",function(){ clearTimeout(rsT); rs
 
 // al terminar de cargar las fuentes los anchos cambian: se recalculan y se redibuja
 if(document.fonts&&document.fonts.ready){ document.fonts.ready.then(function(){ _anchos={}; if(typeof mapDirty!=="undefined") mapDirty=true; var e=document.getElementById("map"); if(e&&e.getBoundingClientRect().width>0) drawPoints(); }); }
+
+window.addEventListener("resize",function(){ clearTimeout(_rz); _rz=setTimeout(function(){ var e=document.getElementById("map"); if(e&&e.getBoundingClientRect().width>0&&ovl) drawPoints(); },200); });
 
 
 document.getElementById("mapMetric").addEventListener("change",drawPoints);
