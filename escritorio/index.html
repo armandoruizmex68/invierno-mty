@@ -645,6 +645,30 @@ var rsT=null; window.addEventListener("resize",function(){ clearTimeout(rsT); rs
 // al terminar de cargar las fuentes los anchos cambian: se recalculan y se redibuja
 if(document.fonts&&document.fonts.ready){ document.fonts.ready.then(function(){ _anchos={}; if(typeof mapDirty!=="undefined") mapDirty=true; var e=document.getElementById("map"); if(e&&e.getBoundingClientRect().width>0) drawPoints(); }); }
 
+/* ---- Diagnóstico del mapa (solo con ?diag=1): mide cómo dibuja el navegador las etiquetas reales ---- */
+function mapDiag(){
+  try{
+    var svg=document.getElementById("map"), host=document.getElementById("mapwrap").parentNode, pre=document.getElementById("mapDiag");
+    if(!pre){ pre=document.createElement("pre"); pre.id="mapDiag"; pre.style.cssText="white-space:pre-wrap;word-break:break-word;font:12px/1.35 monospace;background:#fff;color:#111;border:2px solid #c00;padding:8px;margin:8px 0;user-select:text"; host.appendChild(pre); }
+    var L=[], r=svg.getBoundingClientRect(), vb=svg.getAttribute("viewBox").split(/\s+/).map(Number);
+    var sx=r.width/vb[2], sy=r.height/vb[3];
+    L.push("Vista: "+viewName+" | viewBox "+vb.map(function(v){return v.toFixed(1);}).join(" ")+" | SVG en pantalla "+r.width.toFixed(1)+" x "+r.height.toFixed(1)+" px | dpr "+devicePixelRatio);
+    L.push("Escala x "+sx.toFixed(3)+" | escala y "+sy.toFixed(3)+" | cociente x/y "+(sx/sy).toFixed(3)+"   (letterbox correcto: la menor de las dos es la real)");
+    L.push("preserveAspectRatio: "+(svg.getAttribute("preserveAspectRatio")||"(por defecto)")+" | CSS del svg: width "+getComputedStyle(svg).width+" height "+getComputedStyle(svg).height);
+    var ls=[].slice.call(svg.querySelectorAll("text.zl")).slice(0,4), esc=Math.min(sx,sy);
+    ls.forEach(function(t){
+      var cs=getComputedStyle(t), fs=parseFloat(t.getAttribute("font-size")), b=t.getBoundingClientRect();
+      var c=document.createElement("canvas").getContext("2d"); c.font=(t.getAttribute("font-weight")||"400")+" "+(fs*esc)+"px 'Source Sans 3'"; var ex=c.measureText(t.textContent).width;
+      L.push("«"+t.textContent+"» font-size attr "+fs.toFixed(2)+" u → "+(fs*esc).toFixed(1)+" px | caja "+b.width.toFixed(1)+" x "+b.height.toFixed(1)+" px | ancho esperado ≈ "+ex.toFixed(1)+" px | razón ancho "+(b.width/ex).toFixed(2)+" | altura/tamaño "+(b.height/(fs*esc)).toFixed(2));
+      L.push("   estilo: familia "+cs.fontFamily.slice(0,40)+" | peso "+cs.fontWeight+" | fill "+cs.fill+" | stroke "+cs.stroke+" | stroke-width "+cs.strokeWidth+" | paint-order "+cs.paintOrder+" | font-stretch "+cs.fontStretch+" | letter-spacing "+cs.letterSpacing+" | text-rendering "+cs.textRendering);
+    });
+    L.push("Etiquetas dibujadas: "+svg.querySelectorAll("text.zl").length+" | textos totales: "+svg.querySelectorAll("text").length+" | elementos SVG: "+svg.querySelectorAll("*").length);
+    L.push("Fuentes: "+(function(){ var o=[]; document.fonts.forEach(function(x){ o.push(x.family.replace(/['"]/g,"")+" "+x.weight+" "+x.status); }); return o.join(" | ")||"(sin datos)"; })());
+    pre.textContent="DIAGNÓSTICO DEL MAPA (cópialo o tómale captura)\n"+L.join("\n");
+  }catch(e){ var p=document.getElementById("mapDiag"); if(p) p.textContent="Error de diagnóstico: "+e; }
+}
+if(/[?&]diag=1/.test(location.search)){ var _dp=drawPoints; drawPoints=function(){ _dp.apply(this,arguments); setTimeout(mapDiag,400); }; }
+
 
 /* ================= Panel de zona ================= */
 function renderZone(){
