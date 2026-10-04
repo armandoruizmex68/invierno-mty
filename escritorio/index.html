@@ -633,9 +633,9 @@ function drawPoints(){
     if(d.lab){
       // Placa de fondo (rect) detrás del texto, no un halo: el modo oscuro forzado (Samsung Internet) aclara TODO el texto,
       // así que un halo de texto o de contorno se funde con la letra; un rect de fondo sí se oscurece y la letra clara se lee sobre él.
-      var wt=d.on?"700":"500", tw0=textW(d.txt,d.f,wt), pad=px2u(2);
+      var wt=d.on?"700":"500", tw0=textW(d.txt,d.f,wt), pad=px2u(3);
       var x0=d.lab.a==="start"?d.lab.x:d.lab.a==="end"?d.lab.x-tw0:d.lab.x-tw0/2;
-      el("rect",{x:x0-pad,y:d.lab.y-d.f*0.82-px2u(1),width:tw0+2*pad,height:d.f*1.1+px2u(2),rx:px2u(2.5),fill:"var(--panel)",opacity:"0.55","aria-hidden":"true","pointer-events":"none"},g);
+      el("rect",{x:x0-pad,y:d.lab.y-d.f*0.82-px2u(1),width:tw0+2*pad,height:d.f*1.1+px2u(2),rx:px2u(3),fill:"var(--panel)",opacity:"0.8","aria-hidden":"true","pointer-events":"none"},g);
       var tx=el("text",{class:"zl"+(d.on?" on":""),x:d.lab.x,y:d.lab.y,"text-anchor":d.lab.a,"font-size":d.f,"font-weight":wt,fill:"var(--ink)"},g); tx.textContent=d.txt;
     }
     var ti=el("title",{},g); ti.textContent=z.n+": "+fmtMetric(v,k);
