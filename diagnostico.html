@@ -30,6 +30,8 @@ svg{width:100%;height:auto;display:block;border:1px solid #bbb;border-radius:8px
 <text id="t1" x="10" y="30" font-size="14" font-family="'Source Sans 3',sans-serif" font-weight="500">Monterrey norte 0.9°</text>
 <text id="t2" x="10" y="60" font-size="14" font-family="'Source Sans 3',sans-serif" font-weight="700">Siete Colinas 1.6°</text>
 <text id="t3" x="10" y="82" font-size="11.5" font-family="'Source Sans 3',sans-serif">Faldas de la Silla -0.1°</text></svg>
+<div class="k">Etiquetas como las del mapa (fondo con relieve, letra oscura, halo claro)</div>
+<svg id="mp" viewBox="0 0 640 190"><rect width="640" height="190" fill="#c9bfae"/><ellipse cx="520" cy="90" rx="90" ry="60" fill="#7d8f87"/></svg>
 <button id="borrar" type="button">Borrar caché y service worker, y recargar</button>
 <script>
 (async function(){
@@ -67,6 +69,23 @@ svg{width:100%;height:auto;display:block;border:1px solid #bbb;border-radius:8px
   add("Versión en el servidor (sw.js)", sw+(sw===esperado?"  ✔ coincide":"  ✘ NO coincide con "+esperado));
   add("Cachés guardadas en este teléfono", caches_||"(sin acceso)");
   add("Service worker controla la página", ctl);
+
+  // --- Etiquetas del mapa: mismas llamadas que mapa.js (atributos con setAttribute)
+  var NS="http://www.w3.org/2000/svg", mp=document.getElementById("mp");
+  function mk(tag,at,txt,y){ var e=document.createElementNS(NS,tag); for(var k in at) e.setAttribute(k,at[k]); if(txt) e.textContent=txt; mp.appendChild(e); return e; }
+  var base={"font-size":20.4,"font-weight":"700","text-anchor":"start",fill:"#16232c",x:12};
+  function conHalo(y,extra){ var a={}; for(var k in base) a[k]=base[k]; a.y=y; a.stroke="#f7f9f8"; a["stroke-width"]=5.3; for(var j in extra) a[j]=extra[j]; return a; }
+  var s1=mk("text",conHalo(30,{"paint-order":"stroke"}),"A atributo: Siete Colinas 1.6°");
+  var s2=mk("text",conHalo(65,{style:"paint-order:stroke"}),"B estilo: Siete Colinas 1.6°");
+  var h=conHalo(100,{"stroke-linejoin":"round","stroke-linecap":"round"}); mk("text",h,"C doble: Siete Colinas 1.6°"); var f={}; for(var k in base) f[k]=base[k]; f.y=100; mk("text",f,"C doble: Siete Colinas 1.6°");
+  var s4=mk("text",(function(){var a={};for(var k in base)a[k]=base[k];a.y=135;return a;})(),"D sin halo: Siete Colinas 1.6°");
+  var s5=mk("text",conHalo(170,{"paint-order":"stroke","stroke-linejoin":"round"}),"E atributo + join redondo: Siete Colinas");
+  var po=function(e){ return getComputedStyle(e).paintOrder||"(vacío)"; };
+  add("CSS.supports paint-order", window.CSS&&CSS.supports?String(CSS.supports("paint-order","stroke")):"(sin CSS.supports)");
+  add("paint-order calculado A (atributo)", po(s1)+"   <- debe decir 'stroke' (o 'stroke fill'); si dice 'normal', ese navegador ignora el atributo");
+  add("paint-order calculado B (estilo)", po(s2));
+  add("Ancho getBBox A/B/D", s1.getBBox().width.toFixed(1)+" / "+s2.getBBox().width.toFixed(1)+" / "+s4.getBBox().width.toFixed(1));
+  add("SVG de etiquetas en pantalla", mp.getBoundingClientRect().width.toFixed(0)+" x "+mp.getBoundingClientRect().height.toFixed(0)+" px (viewBox 640 x 190)");
   rep.textContent=L.join("\n\n");
   document.getElementById("borrar").addEventListener("click", async function(){
     try{ var rs=await navigator.serviceWorker.getRegistrations(); for(var i=0;i<rs.length;i++) await rs[i].unregister(); }catch(e){}
