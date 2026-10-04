@@ -1,10 +1,10 @@
 /* GENERADO por app/construir.py desde sw_plantilla.js (la versión es el hash de index.html). No editar sw.js. */
-var VERSION = "399041a8fd";
+var VERSION = "f840cc9d19";
 var CACHE = "invierno-mty-" + VERSION;
 var NUCLEO = ["./", "index.html", "manifest.webmanifest", "iconos/icono-192.png", "iconos/icono-512.png", "iconos/apple-touch-icon.png"];
 
 self.addEventListener("install", function(e){
-  e.waitUntil(caches.open(CACHE).then(function(c){ return c.addAll(NUCLEO); }).then(function(){ return self.skipWaiting(); }));
+  e.waitUntil(caches.open(CACHE).then(function(c){ return c.addAll(NUCLEO.map(function(u){ return new Request(u,{cache:"reload"}); })); }).then(function(){ return self.skipWaiting(); }));
 });
 self.addEventListener("activate", function(e){
   e.waitUntil(caches.keys().then(function(ks){
