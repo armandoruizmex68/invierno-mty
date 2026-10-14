@@ -140,6 +140,7 @@ select.big{width:100%;min-height:44px;border:1px solid var(--line);border-radius
 .res span{font-size:12px;color:var(--muted)}
 .res b{font-family:"Barlow Condensed",sans-serif;font-size:24px;font-weight:600}
 .res b.c{color:var(--cold)}
+.res4{grid-template-columns:repeat(2,1fr)}.res4 b{font-size:21px}
 .day .del{background:none;border:0;color:var(--muted);text-decoration:underline;min-height:40px;padding:0 4px;font-size:14px}
 
 /* mapa */
@@ -258,11 +259,12 @@ nav.tabs svg{width:22px;height:22px}
     <h3>El invierno 2026-27</h3>
     <p>Temperatura: regresión de 64 inviernos entre el índice de El Niño (NOAA) y la serie de Berkeley Earth, más la tendencia de calentamiento extrapolada a 2027. La respuesta a El Niño se limita al máximo observado (ONI 2.22, invierno de 1998) para no extrapolar la recta a un evento récord: sin ese tope el resultado sería 0.3 °C más fresco y 62 %. Lluvia: distribución Gamma con escenarios de El Niño. Frío extremo: distribución Gumbel con la mínima media anual (1.1 °C) y el récord (−7.5 °C).</p>
     <p><b>Qué tan firme es la lluvia.</b> Los 71.6 mm de lluvia normal de diciembre a febrero son la normal oficial del SMN (1991-2020). Al contrastarla el 3 de octubre de 2026 con la serie diaria de la estación (38 mm) y con el reanálisis ERA5 (101 mm), las tres fuentes no coinciden en el nivel, así que toma las cifras en milímetros con mucha cautela. Lo que sí se sostiene es la proporción: en ambas fuentes, los inviernos con El Niño moderado llevan en promedio de 1.3 a 1.5 veces la lluvia de un invierno cualquiera (el modelo supone 1.4). Para un El Niño muy fuerte, como el esperado, solo hay 4 o 5 casos y no bastan para confirmarlo: según ERA5, en 1998 y 2016 llovió menos de lo normal.</p>
+    <p><b>Humedad y sensación térmica.</b> El punto de rocío (la humedad absoluta del aire) cambia poco de una zona a otra: se toma el del pronóstico automático de Monterrey centro y solo se baja 1.8 °C por kilómetro de altura. La humedad relativa de cada zona se calcula con la temperatura de esa zona, así que las zonas más frías son más húmedas y, si la temperatura llega al punto de rocío, marca 100 % (rocío o niebla). La sensación térmica es la temperatura aparente de Steadman, la que usa Open-Meteo: combina temperatura, vapor de agua y viento a 10 m; el viento es el del pronóstico de la referencia, igual para todas las zonas. En la noche más fría del invierno se usan el punto de rocío y el viento medianos de las noches más frías de 30 inviernos de ERA5 (1991-2020). Son modelos, no mediciones: no se validaron con higrómetros del SMN, y con calma casi no cuenta el viento. El pronóstico de ejemplo no trae humedad.</p>
     <p><b>Pronóstico automático.</b> Los próximos días pueden cargarse desde Open-Meteo, un modelo global del punto de Monterrey centro. Al compararlo con la estación entre 2022 y 2025 (589 días), la máxima salió en promedio 1.9 °C más baja (2.5 °C en invierno) y, en noches con la estación a 10 °C o menos, la mínima salió 1.5 °C más cálida. Ese sesgo no es estable: cambió en 2025, posiblemente por cambios en el registro de la estación, así que no se aplicó ninguna corrección automática. Lee el pronóstico automático como una predicción de referencia: no se puede modificar. El cielo de noche se clasifica por la nubosidad media de 00 a 08 h (despejado si es menor de 25 %, medio despejado menor de 50 %, medio nublado menor de 75 %, nublado en los demás casos) y se mezcla con la noche con frente según un peso de 1, ⅔, ⅓ o 0 para la noche despejada y en calma; con viento medio de 10 km/h o más la noche se trata como nublada. Esos pesos intermedios son una regla de la app, no un coeficiente calibrado. El cielo de cada día se toma del pronóstico automático de esa misma fecha (de 7 días atrás a 16 adelante) y no se elige a mano; si la fecha no está ahí, se usa un cielo típico: la proporción de noches despejadas del modelo (45 %), no se supone nublado.</p>
     <h3>Límites</h3>
     <p>Calibración con dos estaciones; relieve, río y carreteras con trazo aproximado; el nivel de la lluvia invernal es incierto (las fuentes difieren de 38 a 101 mm). Es un pronóstico de probabilidades, no del tiempo de un día. Para alertas, sigue al SMN y a Protección Civil de Nuevo León.</p>
     <p><a href="https://claude.ai/artifact/TH5HsSWQQCAeaCaHqfQfQm" target="_blank" rel="noopener" style="color:var(--cold);font-weight:600">Abrir la versión de escritorio</a>, con la tabla de método completa, la gráfica de El Niño contra la temperatura y más detalle.</p>
-    <p class="small">Versión de la app: <b>2b61d80</b>. Modelo emitido el 2 de octubre de 2026. Fuentes: Berkeley Earth; NOAA CPC (ONI, ENSO); IRI; SMN (normales y frentes fríos); INEGI (límites municipales); <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (pronóstico automático de los próximos días, licencia CC BY 4.0).</p>
+    <p class="small">Versión de la app: <b>75eac84</b>. Modelo emitido el 2 de octubre de 2026. Fuentes: Berkeley Earth; NOAA CPC (ONI, ENSO); IRI; SMN (normales y frentes fríos); INEGI (límites municipales); <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (pronóstico automático de los próximos días, licencia CC BY 4.0).</p>
   </div>
 </div>
 
@@ -310,6 +312,8 @@ nav.tabs svg{width:22px;height:22px}
           <option value="tminJan">Mínima media de enero</option>
           <option value="tmaxJan">Máxima media de enero</option>
           <option value="rain">Lluvia dic-feb pronosticada</option>
+          <option value="rhFria">Humedad en la noche más fría</option>
+          <option value="atFria">Sensación térmica en la noche más fría</option>
           <option value="day">Mínima del primer día</option>
           <option value="alt">Altitud sobre el nivel del mar</option>
         </select>
@@ -370,6 +374,8 @@ nav.tabs svg{width:22px;height:22px}
           <option value="tminJan">Mínima media de enero</option>
           <option value="tmaxJan">Máxima media de enero</option>
           <option value="rain">Lluvia dic-feb</option>
+          <option value="rhFria">Humedad en la noche más fría</option>
+          <option value="atFria">Sensación térmica en la noche más fría</option>
           <option value="alt">Altitud sobre el nivel del mar</option>
         </select>
       </label>
@@ -420,7 +426,7 @@ var DEFAULT_DAYS = [
 // Se consulta SIEMPRE el punto de la estación de referencia (Monterrey centro); la app lo ajusta a cada zona.
 // No se envía la ubicación del usuario. Es un modelo global, no el pronóstico oficial del SMN.
 var FC_URL = "https://api.open-meteo.com/v1/forecast?latitude=25.733&longitude=-100.30"
-  + "&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&hourly=cloud_cover,wind_speed_10m"
+  + "&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&hourly=cloud_cover,wind_speed_10m,dew_point_2m"
   + "&past_days=7&forecast_days=16&timezone=America%2FMexico_City&wind_speed_unit=kmh";
 var FC_MAX_EDAD_MS = 2*3600*1000;                  // el pronóstico automático se renueva si tiene más de 2 h
 // Cielo de la noche (nubosidad media de 00 a 08 h): despejado <25 %, medio despejado <50 %, medio nublado <75 %, nublado. 
@@ -443,10 +449,12 @@ function parseForecast(j,hoy){
   try{
     var D=j.daily, H=j.hourly, dias=[], cielo={}; hoy=hoy||hoyISO();
     for(var i=0;i<D.time.length;i++){
-      var sc=0,sw=0,n=0;
+      var sc=0,sw=0,n=0,sd=0,nd=0,xd=0,xw=0,nx=0;
       for(var h=0;h<H.time.length;h++){
         if(H.time[h].indexOf(D.time[i]+"T")!==0) continue;
-        var hr=+H.time[h].slice(11,13); if(hr>8) continue;
+        var hr=+H.time[h].slice(11,13); var dp=H.dew_point_2m&&H.dew_point_2m[h], wv=H.wind_speed_10m[h];
+        if(hr>=12&&hr<=18){ if(typeof dp==="number"&&typeof wv==="number"){ xd+=dp; xw+=wv; nx++; } continue; }
+        if(hr>8) continue; if(typeof dp==="number"){ sd+=dp; nd++; }
         if(typeof H.cloud_cover[h]==="number"&&typeof H.wind_speed_10m[h]==="number"){ sc+=H.cloud_cover[h]; sw+=H.wind_speed_10m[h]; n++; }
       }
       var sky=null; if(n>=4) sky={c:skyOf(sc/n), v:Math.round(sw/n*10)/10};
@@ -456,6 +464,7 @@ function parseForecast(j,hoy){
       if(typeof tx!=="number"||typeof tn!=="number"||!isFinite(tx)||!isFinite(tn)) continue;
       var day={d:D.time[i], tx:Math.round(tx*10)/10, tn:Math.round(tn*10)/10, p:Math.round(Math.max(0,+p||0)*10)/10, c:sky?sky.c:"nub", src:"auto"};
       if(sky) day.v=sky.v;
+      if(nd>=4&&sky){ day.dn=Math.round(sd/nd*10)/10; day.vn=sky.v; } if(nx>=4){ day.dx=Math.round(xd/nx*10)/10; day.vx=Math.round(xw/nx*10)/10; }
       dias.push(day);
     }
     return dias.length?{dias:dias,cielo:cielo}:null;
@@ -486,6 +495,22 @@ function dayLabel(iso){
   return ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"][dt.getDay()]+" "+dt.getDate()+" "+["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"][dt.getMonth()];
 }
 function dayMin(d,o){ var w=skyWeight(d); return d.tn+w*o.rad+(1-w)*o.adv; }
+var HUM = {n:30, fria:{td:-1.8, v:6.63}, ene:{td:6.87, v:5.0}, tarde:{td:8.0, v:9.24}, lapse:-1.8};   // ERA5 1991-2020 en el punto de referencia: punto de rocío (°C) y viento (km/h) medianos de la noche más fría de cada invierno, de las noches de enero (00-08 h) y de las tardes de enero (12-18 h); lapse = cambio del punto de rocío con la altura (°C por km)
+/* ================= Humedad y sensación térmica ================= */
+// El punto de rocío (humedad absoluta) cambia poco entre zonas: se toma el de la referencia y solo se corrige por altura;
+// la humedad relativa de cada zona se calcula con SU temperatura (Magnus). La sensación es la temperatura aparente de Steadman (la de Open-Meteo).
+function esat(t){ return 6.1094*Math.exp(17.625*t/(t+243.04)); }
+function tdZona(td,z){ return td+HUM.lapse*(z.e-REF.elev)/1000; }
+function rhOf(t,td){ return Math.max(1,Math.min(100,100*esat(Math.min(td,t))/esat(t))); }       // si el punto de rocío alcanza a la temperatura: 100 % (rocío o niebla)
+function atOf(t,rh,v){ var e=rh/100*6.105*Math.exp(17.27*t/(237.7+t)); return t+0.33*e-0.70*(v||0)/3.6-4.00; }
+function humDay(d,z,o){
+  if(typeof d.dn!=="number"||typeof d.dx!=="number") return null;
+  var tn=dayMin(d,o), tx=d.tx+o.tx, rn=rhOf(tn,tdZona(d.dn,z)), rx=rhOf(tx,tdZona(d.dx,z));
+  return {rn:rn, an:atOf(tn,rn,d.vn), rx:rx, ax:atOf(tx,rx,d.vx)};
+}
+function humFria(z,o){ var t=qMin(0.5,o.ext), rh=rhOf(t,tdZona(HUM.fria.td,z)); return {t:t, rh:rh, at:atOf(t,rh,HUM.fria.v)}; }
+function humTxt(v,k){ return v===null||v===undefined?"—":(k==="r"?Math.round(v)+" %":f1(v)+"°"); }
+function setHum(root,hm){ ["rn","an","rx","ax"].forEach(function(q){ var e=root.querySelector('[data-o="'+q+'"]'); if(e) e.textContent=hm?humTxt(hm[q],q[0]):"—"; }); }
 function metric(z,k){
   var o=offs(z);
   if(k==="ext") return qMin(0.5,o.ext);
@@ -495,21 +520,24 @@ function metric(z,k){
   if(k==="tminJan") return MONTHS[2].tn+o.nino;
   if(k==="day") return days.length? dayMin(days[0],o) : null;
   if(k==="alt") return z.e;
+  if(k==="rhFria") return humFria(z,o).rh;
+  if(k==="atFria") return humFria(z,o).at;
   return null;
 }
-function fmtMetric(v,k){ if(v===null) return "sin datos"; if(k==="alt") return Math.round(v)+" m"; if(k==="frost") return pct(v); if(k==="rain") return Math.round(v)+" mm"; return f1(v)+" °C"; }
-var METRIC_TXT={ext:"noche más fría probable",frost:"probabilidad de helada",rain:"lluvia dic-feb",tmaxJan:"máxima media de enero",tminJan:"mínima media de enero",alt:"altitud sobre el nivel del mar (m)"};
+function fmtMetric(v,k){ if(v===null) return "sin datos"; if(k==="alt") return Math.round(v)+" m"; if(k==="rhFria") return Math.round(v)+" %"; if(k==="frost") return pct(v); if(k==="rain") return Math.round(v)+" mm"; return f1(v)+" °C"; }
+var METRIC_TXT={ext:"noche más fría probable",frost:"probabilidad de helada",rain:"lluvia dic-feb",tmaxJan:"máxima media de enero",tminJan:"mínima media de enero",alt:"altitud sobre el nivel del mar (m)",rhFria:"humedad relativa en la noche más fría",atFria:"sensación térmica en la noche más fría"};
 // Escalas fijas (no se estiran al mínimo y máximo) y paletas distintas por tipo de dato
 var PAL={temp:[[45,110,163],[143,192,222],[241,227,166],[229,154,77],[196,90,44]],
          frost:[[244,247,250],[176,206,230],[92,150,201],[37,92,150],[18,48,94]],
          rain:[[246,243,232],[196,224,214],[118,184,181],[47,128,141],[22,78,99]],
+         hum:[[246,243,232],[214,226,208],[150,196,190],[72,148,170],[30,88,140]],
          alt:[[232,240,222],[192,214,170],[222,196,128],[176,128,84],[104,70,52]]};
 var SCALE={ext:{lo:-3,hi:3,pal:"temp"},tminJan:{lo:5,hi:12,pal:"temp"},tmaxJan:{lo:17,hi:25,pal:"temp"},
-           frost:{lo:0,hi:1,pal:"frost"},rain:{lo:60,hi:110,pal:"rain"},day:{lo:null,hi:null,pal:"temp"},alt:{lo:300,hi:850,pal:"alt"}};
+           frost:{lo:0,hi:1,pal:"frost"},rain:{lo:60,hi:110,pal:"rain"},day:{lo:null,hi:null,pal:"temp"},rhFria:{lo:40,hi:100,pal:"hum"},atFria:{lo:-8,hi:2,pal:"temp"},alt:{lo:300,hi:850,pal:"alt"}};
 function palAt(name,t){ var S=PAL[name]; t=Math.max(0,Math.min(1,t)); var x=t*(S.length-1), i=Math.min(S.length-2,Math.floor(x)), f=x-i, a=S[i], b=S[i+1];
   return "rgb("+a.map(function(v,j){return Math.round(v+(b[j]-v)*f);}).join(",")+")"; }
 function palCSS(name){ return "linear-gradient(90deg,"+PAL[name].map(function(c){return "rgb("+c.join(",")+")";}).join(",")+")"; }
-function shortVal(v,k){ if(v===null) return ""; if(k==="alt") return Math.round(v)+" m"; if(k==="frost") return pct(v); if(k==="rain") return Math.round(v)+" mm"; return f1(v)+"°"; }
+function shortVal(v,k){ if(v===null) return ""; if(k==="alt") return Math.round(v)+" m"; if(k==="rhFria") return Math.round(v)+" %"; if(k==="frost") return pct(v); if(k==="rain") return Math.round(v)+" mm"; return f1(v)+"°"; }
 
 
 
@@ -749,7 +777,7 @@ function gauge(p){
   return '<svg class="gauge" width="58" height="58" viewBox="0 0 58 58" aria-hidden="true"><circle cx="29" cy="29" r="'+r+'" fill="none" stroke="var(--line)" stroke-width="6"/><circle cx="29" cy="29" r="'+r+'" fill="none" stroke="var(--cold)" stroke-width="6" stroke-linecap="round" stroke-dasharray="'+d.toFixed(1)+' '+c.toFixed(1)+'" transform="rotate(-90 29 29)"/></svg>';
 }
 function renderHome(){
-  var z=BYID[cur], o=offs(z), h=BYID[HOME], oh=offs(h), pf=pLe(0,o.ext);
+  var z=BYID[cur], o=offs(z), h=BYID[HOME], oh=offs(h), pf=pLe(0,o.ext), hf=humFria(z,o);
   var edited=(z.e!==z.e0||z.t!==z.t0||z.lat!==z.lat0||z.lon!==z.lon0);
   document.getElementById("chipName").textContent=z.n;
   var vs = z.id===HOME
@@ -758,7 +786,7 @@ function renderHome(){
   document.getElementById("hero").innerHTML=
     '<div class="zn">'+esc(z.n)+(z.id===HOME?'<span class="home-tag">Referencia</span>':'')+'</div>'+
     '<div class="meta">'+esc(z.m)+' · '+z.e+' m · '+TERR_TXT[z.t]+(edited?' (ajustado)':'')+'</div>'+
-    '<div class="bign"><div class="v">'+f1(qMin(0.5,o.ext))+'°</div><div class="l">noche más fría probable del invierno<br>8 de cada 10 inviernos: '+f1(qMin(0.1,o.ext))+' a '+f1(qMin(0.9,o.ext))+' °C</div></div>'+
+    '<div class="bign"><div class="v">'+f1(qMin(0.5,o.ext))+'°</div><div class="l">noche más fría probable del invierno<br>8 de cada 10 inviernos: '+f1(qMin(0.1,o.ext))+' a '+f1(qMin(0.9,o.ext))+' °C<br>Esa noche: humedad '+Math.round(hf.rh)+' % · se siente como '+f1(hf.at)+' °C</div></div>'+
     '<div class="trio">'+
       '<div class="tile">'+gauge(pf)+'<div><div class="num">'+pct(pf)+'</div><div class="lbl">probabilidad de helada</div></div></div>'+
       '<div class="tile"><div><div class="num">'+Math.round(DJF.mean*z.fW)+' mm</div><div class="lbl">lluvia dic-feb<br>(normal '+Math.round(DJF.norm*z.fW)+')</div></div></div>'+
@@ -787,7 +815,8 @@ function renderDays(){
       '<div><div class="lab">Mín. pronóstico</div>'+ro(f1(d.tn),"°C")+'</div>'+
       '<div><div class="lab">Lluvia</div>'+ro(f1(d.p),"mm")+'</div>'+
       '<div><div class="lab">Cielo de noche</div>'+skyHtml(d)+'</div></div>'+
-      '<div class="res" aria-live="polite"><div><span>Máx. aquí</span><b data-o="tx"></b></div><div><span>Mín. aquí</span><b class="c" data-o="tn"></b></div><div><span>Lluvia aquí</span><b data-o="p"></b></div></div></div>';
+      '<div class="res" aria-live="polite"><div><span>Máx. aquí</span><b data-o="tx"></b></div><div><span>Mín. aquí</span><b class="c" data-o="tn"></b></div><div><span>Lluvia aquí</span><b data-o="p"></b></div></div>'+
+      '<div class="res res4" aria-live="polite"><div><span>Humedad de noche</span><b data-o="rn"></b></div><div><span>Se siente de noche</span><b class="c" data-o="an"></b></div><div><span>Humedad de tarde</span><b data-o="rx"></b></div><div><span>Se siente de tarde</span><b data-o="ax"></b></div></div></div>';
   });
   if(!days.length) h='<div class="card"><p class="small">No hay pronóstico cargado. Toca «Traer pronóstico automático».</p></div>';
   document.getElementById("dayCards").innerHTML=h;
@@ -800,6 +829,7 @@ function updateDayOutputs(){
     c.querySelector('[data-o="tx"]').textContent=f1(d.tx+o.tx)+"°";
     c.querySelector('[data-o="tn"]').textContent=f1(dayMin(d,o))+"°";
     c.querySelector('[data-o="p"]').textContent=rainTxt(d.p*z.fA);
+    setHum(c,humDay(d,z,o));
     c.querySelector('[data-wd]').textContent=dayLabel(d.d);
   });
   var box=document.getElementById("staleMsg"); box.innerHTML="";
@@ -846,13 +876,13 @@ function drawHistM(){
 function renderRank(){
   var k=document.getElementById("cmpMetric").value, hv=metric(BYID[HOME],k), sc=SCALE[k];
   var arr=ZONES.map(function(z){return {z:z,v:metric(z,k)};});
-  var tempM=(k==="ext"||k==="tmaxJan"||k==="tminJan");
+  var tempM=(k==="ext"||k==="tmaxJan"||k==="tminJan"||k==="atFria");
   arr.sort(function(a,b){ return tempM? a.v-b.v : b.v-a.v; });
   var vals=arr.map(function(a){return a.v;}), lo=Math.min.apply(null,vals), hi=Math.max.apply(null,vals), base=tempM?lo-1:0;
   var h="";
   arr.forEach(function(a){
     var w=(a.v-base)/((hi-base)||1), col=palAt(sc.pal,(a.v-sc.lo)/(sc.hi-sc.lo));
-    var diff = a.z.id===HOME ? "referencia" : (k==="frost" ? (Math.round((a.v-hv)*100)>0?"+":"")+Math.round((a.v-hv)*100)+" puntos" : k==="rain" ? (Math.round(a.v-hv)>0?"+":"")+Math.round(a.v-hv)+" mm" : k==="alt" ? (Math.round(a.v-hv)>0?"+":"")+Math.round(a.v-hv)+" m" : sgn(a.v-hv)+" °C");
+    var diff = a.z.id===HOME ? "referencia" : (k==="frost" ? (Math.round((a.v-hv)*100)>0?"+":"")+Math.round((a.v-hv)*100)+" puntos" : k==="rain" ? (Math.round(a.v-hv)>0?"+":"")+Math.round(a.v-hv)+" mm" : k==="rhFria" ? (Math.round(a.v-hv)>0?"+":"")+Math.round(a.v-hv)+" puntos" : k==="alt" ? (Math.round(a.v-hv)>0?"+":"")+Math.round(a.v-hv)+" m" : sgn(a.v-hv)+" °C");
     h+='<button type="button" role="listitem" class="row'+(a.z.id===cur?' on':'')+'" data-id="'+a.z.id+'"><span class="nm">'+esc(a.z.n)+(a.z.id===HOME?'<span class="home-tag">Referencia</span>':'')+'<span class="d">'+diff+'</span></span><span class="b" style="width:'+Math.max(6,w*100).toFixed(0)+'%;background:'+col+'"></span><span class="v">'+shortVal(a.v,k)+'</span></button>';
   });
   document.getElementById("rank").innerHTML=h;
