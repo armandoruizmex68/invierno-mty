@@ -333,7 +333,7 @@ footer{margin-top:22px;font-size:13px;color:var(--muted);display:flex;flex-wrap:
     <h3>Límites</h3>
     <p>La serie histórica es regional y mensual; no permite contar heladas. El modelo de zonas se calibró con dos estaciones, y las ubicaciones del mapa son aproximadas. El nivel de la lluvia invernal es incierto: las fuentes difieren de 38 a 101 mm. Un pronóstico estacional da probabilidades; un solo frente ártico puede definir el invierno. Para alertas, sigue al SMN y a Protección Civil de Nuevo León.</p>
     <h3>Fuentes</h3>
-    <p class="small">Berkeley Earth, temperaturas por ciudad (Monterrey, 1825-2013); NOAA CPC, índice ONI (1950-2026) y discusión ENSO del 10 sep 2026; IRI Columbia, sep 2026; SMN, normales 1951-2010 de Apodaca, Santiago y Santa Catarina; NOAA NCEI, normales 1991-2020 de Monterrey; SMN, pronóstico de frentes fríos 2026-27; Magaña (ed.), Los impactos de El Niño en México, UNAM (1999); Atmósfera 30(3), 2017.; <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (pronóstico automático de los próximos días, licencia CC BY 4.0) Versión de la app: <b>620771a</b>.</p>
+    <p class="small">Berkeley Earth, temperaturas por ciudad (Monterrey, 1825-2013); NOAA CPC, índice ONI (1950-2026) y discusión ENSO del 10 sep 2026; IRI Columbia, sep 2026; SMN, normales 1951-2010 de Apodaca, Santiago y Santa Catarina; NOAA NCEI, normales 1991-2020 de Monterrey; SMN, pronóstico de frentes fríos 2026-27; Magaña (ed.), Los impactos de El Niño en México, UNAM (1999); Atmósfera 30(3), 2017.; <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (pronóstico automático de los próximos días, licencia CC BY 4.0) Versión de la app: <b>4d71e02</b>.</p>
   </section>
 
   <footer><span>Versión 3 del modelo, emitida el 2 de octubre de 2026. Revisa las actualizaciones de NOAA (8 oct y 19 nov de 2026) y los avisos del SMN.</span><span><a href="https://claude.ai/artifact/AU4dGMK7ory8eKRPtmAJyy" target="_blank" rel="noopener" style="color:var(--cold);font-weight:600">Versión para celular</a> · <button class="link" type="button" id="resetAll">Borrar todos mis ajustes</button></span></footer>
@@ -414,8 +414,8 @@ function parseForecast(j,hoy){
       var tx=D.temperature_2m_max[i], tn=D.temperature_2m_min[i], p=D.precipitation_sum[i];
       if(D.time[i]<hoy||dias.length>=7) continue;
       if(typeof tx!=="number"||typeof tn!=="number"||!isFinite(tx)||!isFinite(tn)) continue;
-      var day={d:D.time[i], tx:Math.round(tx*10)/10, tn:Math.round(tn*10)/10, p:Math.round(Math.max(0,+p||0)*10)/10, c:sky?sky.c:"nub", src:"auto"};
-      if(sky) day.v=sky.v;
+      var day={d:D.time[i], tx:Math.round(tx*10)/10, tn:Math.round(tn*10)/10, p:Math.round(Math.max(0,+p||0)*10)/10, src:"auto"};
+      if(sky){ day.c=sky.c; day.v=sky.v; }     // sin datos de nubosidad NO se supone nublado: skyRes() usa entonces el cielo típico
       if(nd>=4&&sky){ day.dn=Math.round(sd/nd*10)/10; day.vn=sky.v; } if(nx>=4){ day.dx=Math.round(xd/nx*10)/10; day.vx=Math.round(xw/nx*10)/10; }
       dias.push(day);
     }
