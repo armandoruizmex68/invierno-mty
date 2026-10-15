@@ -333,7 +333,7 @@ footer{margin-top:22px;font-size:13px;color:var(--muted);display:flex;flex-wrap:
     <h3>Límites</h3>
     <p>La serie histórica es regional y mensual; no permite contar heladas. El modelo de zonas se calibró con dos estaciones, y las ubicaciones del mapa son aproximadas. El nivel de la lluvia invernal es incierto: las fuentes difieren de 38 a 101 mm. Un pronóstico estacional da probabilidades; un solo frente ártico puede definir el invierno. Para alertas, sigue al SMN y a Protección Civil de Nuevo León.</p>
     <h3>Fuentes</h3>
-    <p class="small">Berkeley Earth, temperaturas por ciudad (Monterrey, 1825-2013); NOAA CPC, índice ONI (1950-2026) y discusión ENSO del 10 sep 2026; IRI Columbia, sep 2026; SMN, normales 1951-2010 de Apodaca, Santiago y Santa Catarina; NOAA NCEI, normales 1991-2020 de Monterrey; SMN, pronóstico de frentes fríos 2026-27; Magaña (ed.), Los impactos de El Niño en México, UNAM (1999); Atmósfera 30(3), 2017.; <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (pronóstico automático de los próximos días, licencia CC BY 4.0) Versión de la app: <b>4d71e02</b>.</p>
+    <p class="small">Berkeley Earth, temperaturas por ciudad (Monterrey, 1825-2013); NOAA CPC, índice ONI (1950-2026) y discusión ENSO del 10 sep 2026; IRI Columbia, sep 2026; SMN, normales 1951-2010 de Apodaca, Santiago y Santa Catarina; NOAA NCEI, normales 1991-2020 de Monterrey; SMN, pronóstico de frentes fríos 2026-27; Magaña (ed.), Los impactos de El Niño en México, UNAM (1999); Atmósfera 30(3), 2017.; <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (pronóstico automático de los próximos días, licencia CC BY 4.0) Versión de la app: <b>74610b9</b>.</p>
   </section>
 
   <footer><span>Versión 3 del modelo, emitida el 2 de octubre de 2026. Revisa las actualizaciones de NOAA (8 oct y 19 nov de 2026) y los avisos del SMN.</span><span><a href="https://claude.ai/artifact/AU4dGMK7ory8eKRPtmAJyy" target="_blank" rel="noopener" style="color:var(--cold);font-weight:600">Versión para celular</a> · <button class="link" type="button" id="resetAll">Borrar todos mis ajustes</button></span></footer>
@@ -947,7 +947,7 @@ function traerPronostico(){
   var ctl=window.AbortController?new AbortController():null, to=setTimeout(function(){ if(ctl) ctl.abort(); },12000);
   fetch(FC_URL, ctl?{signal:ctl.signal}:{}).then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
     .then(function(j){ var r=parseForecast(j,hoyISO()); if(!r) throw new Error("vacío"); guardarSky(r.cielo); days=r.dias; save("days",days); fc={t:Date.now(),auto:true}; save("fc",fc); renderAll(); setFcMsg(); })
-    .catch(function(){ setFcMsg("No se pudo obtener el pronóstico automático (sin conexión o servicio no disponible). Se conservan los días actuales."); })
+    .catch(function(e){ setFcMsg(e&&e.message==="429" ? "Open-Meteo alcanzó su límite diario de consultas para esta red (el límite es por conexión a internet, no de la app). Se conservan los días actuales: reintenta más tarde o con datos móviles." : "No se pudo obtener el pronóstico automático (sin conexión o servicio no disponible). Se conservan los días actuales."); })
     .then(function(){ clearTimeout(to); fcBusy=false; if(b) b.disabled=false; });
 }
 document.getElementById("fcBtn").addEventListener("click",function(){
