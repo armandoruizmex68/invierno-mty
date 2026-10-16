@@ -118,7 +118,8 @@ details.adj[open] summary::after{content:"－"}
 :root{--chipbg:rgba(247,249,248,.82)}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--chipbg:rgba(27,37,43,.82)}}:root[data-theme="dark"]{--chipbg:rgba(27,37,43,.82)}:root[data-theme="light"]{--chipbg:rgba(247,249,248,.82)}
 .upd{display:flex;gap:10px;align-items:center;justify-content:space-between;background:var(--accent);color:#1b1b1b;padding:10px 14px;font-weight:600;font-size:15px}
 .upd button{min-height:44px;padding:0 16px;border-radius:10px;border:0;background:#16232c;color:#fff;font:700 16px "Source Sans 3",sans-serif;flex:none}
-.roval{font-family:"Barlow Condensed",sans-serif;font-size:24px;font-weight:600;line-height:1.1}.roval small{font:400 13px "Source Sans 3",sans-serif;color:var(--muted)}
+.roval{font-family:"Barlow Condensed",sans-serif;font-size:24px;font-weight:600;line-height:1.1}.raw{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.roval small{font:400 13px "Source Sans 3",sans-serif;color:var(--muted)}
 .skyro{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;border:1px solid var(--line);border-radius:10px;font-size:14px;font-weight:600;line-height:1.2}.skyro small{font-weight:400;color:var(--muted)}
 .field{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
 .field>span{font-size:12px;color:var(--muted)}
@@ -260,11 +261,11 @@ nav.tabs svg{width:22px;height:22px}
     <p>Temperatura: regresión de 64 inviernos entre el índice de El Niño (NOAA) y la serie de Berkeley Earth, más la tendencia de calentamiento extrapolada a 2027. La respuesta a El Niño se limita al máximo observado (ONI 2.22, invierno de 1998) para no extrapolar la recta a un evento récord: sin ese tope el resultado sería 0.3 °C más fresco y 62 %. Lluvia: distribución Gamma con escenarios de El Niño. Frío extremo: distribución Gumbel con la mínima media anual (1.1 °C) y el récord (−7.5 °C).</p>
     <p><b>Qué tan firme es la lluvia.</b> Los 71.6 mm de lluvia normal de diciembre a febrero son la normal oficial del SMN (1991-2020). Al contrastarla el 3 de octubre de 2026 con la serie diaria de la estación (38 mm) y con el reanálisis ERA5 (101 mm), las tres fuentes no coinciden en el nivel, así que toma las cifras en milímetros con mucha cautela. Lo que sí se sostiene es la proporción: en ambas fuentes, los inviernos con El Niño moderado llevan en promedio de 1.3 a 1.5 veces la lluvia de un invierno cualquiera (el modelo supone 1.4). Para un El Niño muy fuerte, como el esperado, solo hay 4 o 5 casos y no bastan para confirmarlo: según ERA5, en 1998 y 2016 llovió menos de lo normal.</p>
     <p><b>Humedad y sensación térmica.</b> El punto de rocío (la humedad absoluta del aire) cambia poco de una zona a otra: se toma el del pronóstico automático de Monterrey centro y solo se baja 1.8 °C por kilómetro de altura. La humedad relativa de cada zona se calcula con la temperatura de esa zona, así que las zonas más frías son más húmedas y, si la temperatura llega al punto de rocío, marca 100 % (rocío o niebla). La sensación térmica es la temperatura aparente de Steadman, la que usa Open-Meteo: combina temperatura, vapor de agua y viento a 10 m; el viento es el del pronóstico de la referencia, igual para todas las zonas. En la noche más fría del invierno se usan el punto de rocío y el viento medianos de las noches más frías de 30 inviernos de ERA5 (1991-2020). Son modelos, no mediciones: no se validaron con higrómetros del SMN, y con calma casi no cuenta el viento. El pronóstico de ejemplo no trae humedad.</p>
-    <p><b>Pronóstico automático.</b> Los próximos días pueden cargarse desde Open-Meteo, un modelo global del punto de Monterrey centro. Al compararlo con la estación entre 2022 y 2025 (589 días), la máxima salió en promedio 1.9 °C más baja (2.5 °C en invierno) y, en noches con la estación a 10 °C o menos, la mínima salió 1.5 °C más cálida. Ese sesgo no es estable: cambió en 2025, posiblemente por cambios en el registro de la estación, así que no se aplicó ninguna corrección automática. Lee el pronóstico automático como una predicción de referencia: no se puede modificar. El cielo de noche se clasifica por la nubosidad media de 00 a 08 h (despejado si es menor de 25 %, medio despejado menor de 50 %, medio nublado menor de 75 %, nublado en los demás casos) y se mezcla con la noche con frente según un peso de 1, ⅔, ⅓ o 0 para la noche despejada y en calma; con viento medio de 10 km/h o más la noche se trata como nublada. Esos pesos intermedios son una regla de la app, no un coeficiente calibrado. El cielo de cada día se toma del pronóstico automático de esa misma fecha (de 7 días atrás a 16 adelante) y no se elige a mano; si la fecha no está ahí, se usa un cielo típico: la proporción de noches despejadas del modelo (45 %), no se supone nublado.</p>
+    <p><b>Pronóstico automático.</b> Los próximos días pueden cargarse desde Open-Meteo, un modelo global del punto de Monterrey centro. Se comparó con la estación de Monterrey entre 2022 y 2025 (589 días): la máxima salió en promedio 1.9 °C más baja (2.5 °C en invierno) y, en noches con la estación a 10 °C o menos, la mínima salió 1.5 °C más cálida. Ese sesgo no es estable: cambió en 2025 (cambio de modelo de Open-Meteo o del registro de la estación), así que la corrección es parcial: se calcula con los otros años y se mide en el año retenido, se aplica solo si mejoró en la mayoría de los años sin empeorar el más reciente, y entre intensidades casi iguales se usa la menor. Resultado: se suma +0.9 °C de marzo a mayo y +1.2 °C en octubre y noviembre a la máxima y +0.4 °C de junio a septiembre a la mínima; el resto no se corrige porque la corrección no mejoró el error en años que no se usaron para calcularla. Debajo de cada temperatura se muestra el valor original de Open-Meteo. La lluvia y la humedad no se corrigen. Lee el pronóstico automático como una predicción de referencia: no se puede modificar. El cielo de noche se clasifica por la nubosidad media de 00 a 08 h (despejado si es menor de 25 %, medio despejado menor de 50 %, medio nublado menor de 75 %, nublado en los demás casos) y se mezcla con la noche con frente según un peso de 1, ⅔, ⅓ o 0 para la noche despejada y en calma; con viento medio de 10 km/h o más la noche se trata como nublada. Esos pesos intermedios son una regla de la app, no un coeficiente calibrado. El cielo de cada día se toma del pronóstico automático de esa misma fecha (de 7 días atrás a 16 adelante) y no se elige a mano; si la fecha no está ahí, se usa un cielo típico: la proporción de noches despejadas del modelo (45 %), no se supone nublado.</p>
     <h3>Límites</h3>
     <p>Calibración con dos estaciones; relieve, río y carreteras con trazo aproximado; el nivel de la lluvia invernal es incierto (las fuentes difieren de 38 a 101 mm). Es un pronóstico de probabilidades, no del tiempo de un día. Para alertas, sigue al SMN y a Protección Civil de Nuevo León.</p>
     <p><a href="https://claude.ai/artifact/TH5HsSWQQCAeaCaHqfQfQm" target="_blank" rel="noopener" style="color:var(--cold);font-weight:600">Abrir la versión de escritorio</a>, con la tabla de método completa, la gráfica de El Niño contra la temperatura y más detalle.</p>
-    <p class="small">Versión de la app: <b>d936e80</b>. Modelo emitido el 2 de octubre de 2026. Fuentes: Berkeley Earth; NOAA CPC (ONI, ENSO); IRI; SMN (normales y frentes fríos); INEGI (límites municipales); <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (pronóstico automático de los próximos días, licencia CC BY 4.0).</p>
+    <p class="small">Versión de la app: <b>ac7801f</b>. Modelo emitido el 2 de octubre de 2026. Fuentes: Berkeley Earth; NOAA CPC (ONI, ENSO); IRI; SMN (normales y frentes fríos); INEGI (límites municipales); <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (pronóstico automático de los próximos días, licencia CC BY 4.0).</p>
   </div>
 </div>
 
@@ -428,6 +429,10 @@ var DEFAULT_DAYS = [
 var FC_URL = "https://api.open-meteo.com/v1/forecast?latitude=25.733&longitude=-100.30"
   + "&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&hourly=cloud_cover,wind_speed_10m,dew_point_2m"
   + "&past_days=7&forecast_days=16&timezone=America%2FMexico_City&wind_speed_unit=kmh";
+var FC_BIAS = {tx: {DJF: 0.0, MAM: 0.87, JJAS: 0.0, ON: 1.22}, tn: {DJF: 0.0, MAM: 0.0, JJAS: 0.36, ON: 0.0}};   // °C que se SUMAN al pronóstico automático, por temporada (DJF, MAM, JJAS, ON): sesgo medido contra la estación y validado dejando un año fuera (analisis/correccion_sesgo.py, datos/correccion_sesgo_*.json)
+function biasSeason(iso){ var m=+String(iso).slice(5,7); return (m===12||m<=2)?"DJF":(m<=5)?"MAM":(m<=9)?"JJAS":"ON"; }
+function biasOf(v,iso){ var b=FC_BIAS[v]&&FC_BIAS[v][biasSeason(iso)]; return +b||0; }
+function r1(x){ return Math.round(x*10)/10; }
 var FC_MAX_EDAD_MS = 2*3600*1000;                  // el pronóstico automático se renueva si tiene más de 2 h
 // Cielo de la noche (nubosidad media de 00 a 08 h): despejado <25 %, medio despejado <50 %, medio nublado <75 %, nublado. 
 // Peso de la noche "radiativa" (despejada y en calma) en la mezcla con la noche "con frente/nublado": 1, 2/3, 1/3, 0.
@@ -462,7 +467,9 @@ function parseForecast(j,hoy){
       var tx=D.temperature_2m_max[i], tn=D.temperature_2m_min[i], p=D.precipitation_sum[i];
       if(D.time[i]<hoy||dias.length>=7) continue;
       if(typeof tx!=="number"||typeof tn!=="number"||!isFinite(tx)||!isFinite(tn)) continue;
-      var day={d:D.time[i], tx:Math.round(tx*10)/10, tn:Math.round(tn*10)/10, p:Math.round(Math.max(0,+p||0)*10)/10, src:"auto"};
+      var bx=biasOf("tx",D.time[i]), bn=biasOf("tn",D.time[i]), txc=r1(tx+bx), tnc=Math.min(r1(tn+bn),txc);      // pronóstico corregido por el sesgo estacional; el original queda en txr/tnr
+      var day={d:D.time[i], tx:txc, tn:tnc, p:Math.round(Math.max(0,+p||0)*10)/10, src:"auto"};
+      if(bx||bn){ day.txr=r1(tx); day.tnr=r1(tn); }
       if(sky){ day.c=sky.c; day.v=sky.v; }     // sin datos de nubosidad NO se supone nublado: skyRes() usa entonces el cielo típico
       if(nd>=4&&sky){ day.dn=Math.round(sd/nd*10)/10; day.vn=sky.v; } if(nx>=4){ day.dx=Math.round(xd/nx*10)/10; day.vx=Math.round(xw/nx*10)/10; }
       dias.push(day);
@@ -807,14 +814,15 @@ function rainTxt(v){ return (v>0&&v<0.5?"<1":Math.round(v))+" mm"; }
 
 /* ================= Días ================= */
 function today(){ var n=new Date(); return n.getFullYear()+"-"+String(n.getMonth()+1).padStart(2,"0")+"-"+String(n.getDate()).padStart(2,"0"); }
+function rawTxt(r,c){ return (r!==undefined&&r!==c)?'<span class="raw">Open-Meteo '+f1(r)+' °C</span>':""; }
 function ro(v,u){ return '<div class="roval">'+v+(u?'<small> '+u+'</small>':'')+'</div>'; }
 function renderDays(){
   var z=BYID[cur]; document.getElementById("daysZone").textContent=z.n;
   var h="";
   days.forEach(function(d,i){
     h+='<div class="card day" data-row="'+i+'"><div class="dh"><b data-wd>'+dayLabel(d.d)+'</b><span class="small">'+esc(d.d.split("-").reverse().join("/"))+'</span></div>'+
-      '<div class="grid3"><div><div class="lab">Máx. pronóstico</div>'+ro(f1(d.tx),"°C")+'</div>'+
-      '<div><div class="lab">Mín. pronóstico</div>'+ro(f1(d.tn),"°C")+'</div>'+
+      '<div class="grid3"><div><div class="lab">Máx. pronóstico</div>'+ro(f1(d.tx),"°C")+rawTxt(d.txr,d.tx)+'</div>'+
+      '<div><div class="lab">Mín. pronóstico</div>'+ro(f1(d.tn),"°C")+rawTxt(d.tnr,d.tn)+'</div>'+
       '<div><div class="lab">Lluvia</div>'+ro(f1(d.p),"mm")+'</div>'+
       '<div><div class="lab">Cielo de noche</div>'+skyHtml(d)+'</div></div>'+
       '<div class="res" aria-live="polite"><div><span>Máx. aquí</span><b data-o="tx"></b></div><div><span>Mín. aquí</span><b class="c" data-o="tn"></b></div><div><span>Lluvia aquí</span><b data-o="p"></b></div></div>'+
@@ -957,7 +965,7 @@ var fs=load("fcsky",null); if(fs&&typeof fs==="object") SKYMAP=fs;
 function guardarSky(nd){ var m={}, lim=Date.now()-30*864e5; Object.keys(SKYMAP).forEach(function(k){ if(new Date(k).getTime()>lim) m[k]=SKYMAP[k]; }); Object.keys(nd).forEach(function(k){ m[k]={c:nd[k].c,v:nd[k].v}; }); SKYMAP=m; save("fcsky",m); }
 function refreshSky(i){ var h=document.querySelector('[data-row="'+i+'"] .skyro'); if(h&&days[i]) h.outerHTML=skyHtml(days[i]); }
 function setFcMsg(txt){ var el=document.getElementById("fcStatus"); if(!el) return;
-  el.textContent = txt || (fc.auto&&fc.t ? "Pronóstico automático de Open-Meteo para Monterrey centro, actualizado el "+fcLabel(fc.t)+". Es un modelo global, no el pronóstico oficial del SMN: úsalo como referencia. Frente a la estación oficial, la máxima automática suele salir de 1 a 3 °C más baja y, en noches muy frías, la mínima puede salir 1 a 1.5 °C más cálida." : "Pronóstico de ejemplo, solo ilustrativo: aún no se carga el automático. Usa «Traer pronóstico automático»."); }
+  el.textContent = txt || (fc.auto&&fc.t ? "Pronóstico automático de Open-Meteo para Monterrey centro, actualizado el "+fcLabel(fc.t)+". Es un modelo global, no el pronóstico oficial del SMN: úsalo como referencia. Las temperaturas están corregidas por el sesgo que mostró frente a la estación (el valor original de Open-Meteo aparece debajo); la lluvia no se corrige." : "Pronóstico de ejemplo, solo ilustrativo: aún no se carga el automático. Usa «Traer pronóstico automático»."); }
 function saveDays(){ save("days",days); }
 function traerPronostico(){
   if(fcBusy) return; fcBusy=true; var b=document.getElementById("fcBtn"); if(b) b.disabled=true; setFcMsg("Consultando Open-Meteo…");
