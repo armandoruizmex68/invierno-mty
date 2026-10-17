@@ -335,11 +335,12 @@ footer{margin-top:22px;font-size:13px;color:var(--muted);display:flex;flex-wrap:
     <p><b>Ciclones tropicales.</b> Los ciclones del Pacífico y del Atlántico casi no tocan el invierno: de diciembre a febrero ningún ciclón se acercó a menos de 500 km de Monterrey en 34 años (1991-2024) y en noviembre solo uno a 800 km. Sí pesan en la temporada de lluvias: a 500 km aportan 3.5 % de la lluvia de octubre (IC95 de 0.6 a 7.1 %) y a 800 km, 10 % (5 a 16 %); en verano hasta 17-33 % (julio y agosto, con intervalos amplios). La cantidad de ciclones de una temporada no predice la lluvia del invierno siguiente una vez descontado El Niño (correlación parcial −0.20, IC95 de −0.55 a +0.20, p = 0.26), así que no entra en el modelo del invierno. Lo que sí cambia es el pronóstico del día: con un ciclón cerca la lluvia pronosticada es mucho menos confiable (en 2022-2025 solo hubo 6 días así con estación; el pronóstico sobrestimó en promedio 22 mm, IC95 de −6 a +80, muy pocos días para medirlo bien). Fuente: IBTrACS (NOAA), ERA5 y la estación de Monterrey.</p>
     <p><b>Lluvia: varios modelos.</b> La lluvia que muestra la app es la mediana de cuatro modelos (ECMWF, GFS, ICON y GEM) y se muestra su rango, no la de un solo modelo. El 16 de octubre de 2026 el modelo único que se usaba dio 6.8 mm en Monterrey mientras otros tres daban de 18 a 33 mm, y llovió mucho. Con 221 días de 2024 contra la estación de Monterrey, la mediana se equivocó 3.8 mm por día contra 4.7 mm del modelo único (diferencia no significativa en todos los días), y ningún modelo predice bien la lluvia puntual: en los 17 días de lluvia fuerte (49 mm observados en promedio) la mediana dio 19 mm y el modelo único 29 mm. Por eso la app avisa «riesgo de lluvia fuerte» cuando al menos 2 de los 4 modelos dan 5 mm o más: así avisó 11 de los 17 días de lluvia fuerte (65 %, contra 29 % con un solo modelo), a costa de 17 falsas alarmas; de cada 100 avisos, 39 tuvieron lluvia fuerte (la frecuencia normal es 8 de cada 100 días). Es un solo año de validación.</p>
     <p><b>Probabilidad de lluvia.</b> No se usa la probabilidad que ofrece Open-Meteo: en 2024 decía 70 a 100 % la mayoría de los días y llovió 1 mm o más solo el 39 % de esos días (peor que usar siempre la frecuencia normal: habilidad −54 % en Monterrey y −61 % en Tacubaya). La app calcula la suya con cuántos de los 4 modelos dan 1 mm o más y la calibra con lo que pasó en la estación: con 0 modelos 3 %, con 1 12 %, con 2 36 %, con 3 43 % y con los 4 73 %. Validada dejando un mes fuera, mejora a la frecuencia normal en 37 % (Monterrey, 221 días de 2024). Es la probabilidad de 1 mm o más en la estación, no de lluvia fuerte; son pocos días por categoría y un solo año.</p>
+    <p><b>Aviso de ciclón tropical.</b> La app consulta en GDACS (ONU y Comisión Europea) los ciclones activos y avisa si alguno está a menos de 800 km (a menos de 500 km, «cerca»), con la distancia calculada aquí desde el punto de referencia del pronóstico; no se envía tu ubicación. Se hace así porque entre octubre y noviembre un ciclón cerca cambia la lluvia: a 500 km aportan 3.5 % de la lluvia de octubre en Monterrey y a 800 km 10 %, y el pronóstico de lluvia se equivoca mucho más. Solo se muestra posición y distancia, no intensidad, porque GDACS da el viento máximo de toda la vida del ciclón y no el actual; para eso hay un enlace al Centro Nacional de Huracanes. Si la consulta falla o los datos tienen más de 12 horas, no se afirma que no haya ciclones.</p>
     <p><b>Pronóstico automático.</b> Los próximos días pueden cargarse desde Open-Meteo, un modelo global del punto de Monterrey centro. Se comparó con la estación de Monterrey entre 2022 y 2025 (589 días): la máxima salió en promedio 1.9 °C más baja (2.5 °C en invierno) y, en noches con la estación a 10 °C o menos, la mínima salió 1.5 °C más cálida. Ese sesgo no es estable: cambió en 2025 (cambio de modelo de Open-Meteo o del registro de la estación), así que la corrección es parcial: se calcula con los otros años y se mide en el año retenido, se aplica solo si mejoró en la mayoría de los años sin empeorar el más reciente, y entre intensidades casi iguales se usa la menor. Resultado: se suma +0.9 °C de marzo a mayo y +1.2 °C en octubre y noviembre a la máxima y +0.4 °C de junio a septiembre a la mínima; el resto no se corrige porque la corrección no mejoró el error en años que no se usaron para calcularla. Debajo de cada temperatura se muestra el valor original de Open-Meteo. La lluvia y la humedad no se corrigen. Lee el pronóstico automático como una predicción de referencia: no se puede modificar. El cielo de noche se clasifica por la nubosidad media de 00 a 08 h (despejado si es menor de 25 %, medio despejado menor de 50 %, medio nublado menor de 75 %, nublado en los demás casos) y se mezcla con la noche con frente según un peso de 1, ⅔, ⅓ o 0 para la noche despejada y en calma; con viento medio de 10 km/h o más la noche se trata como nublada. Esos pesos intermedios son una regla de la app, no un coeficiente calibrado. El cielo de cada día se toma del pronóstico automático de esa misma fecha (de 7 días atrás a 16 adelante) y no se elige a mano; si la fecha no está ahí, se usa un cielo típico: la proporción de noches despejadas del modelo (45 %), no se supone nublado.</p>
     <h3>Límites</h3>
     <p>La serie histórica es regional y mensual; no permite contar heladas. El modelo de zonas se calibró con dos estaciones, y las ubicaciones del mapa son aproximadas. El nivel de la lluvia invernal es incierto: las fuentes difieren de 38 a 101 mm. Un pronóstico estacional da probabilidades; un solo frente ártico puede definir el invierno. Para alertas, sigue al SMN y a Protección Civil de Nuevo León.</p>
     <h3>Fuentes</h3>
-    <p class="small">Berkeley Earth, temperaturas por ciudad (Monterrey, 1825-2013); NOAA CPC, índice ONI (1950-2026) y discusión ENSO del 10 sep 2026; IRI Columbia, sep 2026; SMN, normales 1951-2010 de Apodaca, Santiago y Santa Catarina; NOAA NCEI, normales 1991-2020 de Monterrey; SMN, pronóstico de frentes fríos 2026-27; Magaña (ed.), Los impactos de El Niño en México, UNAM (1999); Atmósfera 30(3), 2017.; <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (pronóstico automático de los próximos días, licencia CC BY 4.0) Versión de la app: <b>aed558b</b>.</p>
+    <p class="small">Berkeley Earth, temperaturas por ciudad (Monterrey, 1825-2013); NOAA CPC, índice ONI (1950-2026) y discusión ENSO del 10 sep 2026; IRI Columbia, sep 2026; SMN, normales 1951-2010 de Apodaca, Santiago y Santa Catarina; NOAA NCEI, normales 1991-2020 de Monterrey; SMN, pronóstico de frentes fríos 2026-27; Magaña (ed.), Los impactos de El Niño en México, UNAM (1999); Atmósfera 30(3), 2017.; <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (pronóstico automático de los próximos días, licencia CC BY 4.0) Versión de la app: <b>eea42c4</b>.</p>
   </section>
 
   <footer><span>Versión 3 del modelo, emitida el 2 de octubre de 2026. Revisa las actualizaciones de NOAA (8 oct y 19 nov de 2026) y los avisos del SMN.</span><span><a href="https://claude.ai/artifact/AU4dGMK7ory8eKRPtmAJyy" target="_blank" rel="noopener" style="color:var(--cold);font-weight:600">Versión para celular</a> · <button class="link" type="button" id="resetAll">Borrar todos mis ajustes</button></span></footer>
@@ -465,6 +466,33 @@ function avisoLluviaHtml(dias){
   var f=(dias||[]).filter(function(d){ return lluviaFuerte(d)&&d.d>=hoyISO(); }).slice(0,3); if(!f.length) return "";
   return '<div class="warn"><b>Riesgo de lluvia fuerte:</b> '+f.map(function(d){ return dayLabel(d.d)+' ('+d.pm.n5+' de '+d.pm.n+' modelos dan '+AVISO_MM+' mm o más; rango '+f1(d.pm.mn)+' a '+f1(d.pm.mx)+' mm)'; }).join("; ")+'. Es un aviso por acuerdo entre modelos, no una cantidad exacta.</div>';
 }
+/* ================= Ciclones tropicales cerca (GDACS, mejor esfuerzo) ================= */
+// Posición de los ciclones activos desde GDACS (ONU y Comisión Europea; permite lectura desde el navegador, el JSON del Centro Nacional de Huracanes no). No se envía ninguna ubicación: la distancia se calcula aquí
+// desde el punto de referencia del pronóstico. GDACS da el viento MÁXIMO del ciclón en toda su vida, no el actual: por eso no se muestra intensidad (enlace al NHC). Radios de analisis/ciclones_lluvia.py.
+var CIC_CERCA = 500, CIC_REGION = 800, CIC_VIGENCIA_H = 12;
+var CIC_NOTA = "Con un ciclón cerca la lluvia pronosticada es poco confiable: entre 2022 y 2025 hubo solo 6 días con ciclón a menos de 500 km de Monterrey con estación y el pronóstico se equivocó por decenas de milímetros.";
+function refLatLon(){ var m=/latitude=([-\d.]+)&longitude=([-\d.]+)/.exec(FC_URL); return [+m[1],+m[2]]; }
+function distKm(la1,lo1,la2,lo2){ var p=Math.PI/180, a=Math.pow(Math.sin((la2-la1)*p/2),2)+Math.cos(la1*p)*Math.cos(la2*p)*Math.pow(Math.sin((lo2-lo1)*p/2),2); return 12742*Math.asin(Math.sqrt(a)); }
+function rumboTxt(la1,lo1,la2,lo2){ var p=Math.PI/180, y=Math.sin((lo2-lo1)*p)*Math.cos(la2*p), x=Math.cos(la1*p)*Math.sin(la2*p)-Math.sin(la1*p)*Math.cos(la2*p)*Math.cos((lo2-lo1)*p), b=(Math.atan2(y,x)/p+360)%360; return ["norte","noreste","este","sureste","sur","suroeste","oeste","noroeste"][Math.round(b/45)%8]; }
+function urlCiclones(){ var h=new Date(), f=function(d){ return d.toISOString().slice(0,10); }; return "https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH?eventlist=TC&alertlevel=Green;Orange;Red&fromDate="+f(new Date(h.getTime()-4*864e5))+"&toDate="+f(new Date(h.getTime()+864e5)); }
+function parseCiclones(j,ahora){
+  try{
+    var ref=refLatLon(), out=[]; ahora=ahora||Date.now();
+    (j.features||[]).forEach(function(f){
+      var p=f.properties||{}, c=f.geometry&&f.geometry.coordinates; if(p.eventtype!=="TC"||String(p.iscurrent)!=="true"||!c||c.length<2) return;
+      var fin=Date.parse((p.todate||"")+"Z"); if(isFinite(fin)&&ahora-fin>18*3600e3) return;      // ya sin avisos desde hace más de 18 h
+      var d=distKm(ref[0],ref[1],c[1],c[0]); out.push({n:String(p.eventname||"").replace(/-\d+$/,""), lat:c[1], lon:c[0], d:Math.round(d), r:rumboTxt(ref[0],ref[1],c[1],c[0])});
+    });
+    out.sort(function(a,b){ return a.d-b.d; }); return out;
+  }catch(e){ return null; }
+}
+function avisoCiclonHtml(cic){
+  if(!cic||!cic.l||Date.now()-cic.t>CIC_VIGENCIA_H*3600e3) return "";             // sin datos recientes NO se afirma que no hay ciclones
+  var cerca=cic.l.filter(function(c){ return c.d<=CIC_REGION; }), hh=new Date(cic.t).toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"});
+  if(!cerca.length) return '<p class="small" style="margin:6px 0">Sin ciclones tropicales activos a menos de '+CIC_REGION+' km (GDACS, consultado '+hh+').</p>';
+  return '<div class="warn"><b>'+(cerca[0].d<=CIC_CERCA?'Ciclón tropical cerca:':'Ciclón tropical en la región:')+'</b> '+cerca.map(function(c){ return esc(c.n)+', a '+c.d+' km al '+c.r; }).join("; ")+'. '+CIC_NOTA+' Intensidad y trayectoria: <a href="https://www.nhc.noaa.gov/" target="_blank" rel="noopener">Centro Nacional de Huracanes</a>. <span class="small">(GDACS, '+hh+')</span></div>';
+}
+function avisosHtml(dias){ return avisoCiclonHtml(typeof CIC!=="undefined"?CIC:null)+avisoLluviaHtml(dias); }
 function fcLabel(t){ var d=new Date(t); return d.toLocaleDateString("es-MX",{day:"numeric",month:"short"})+", "+d.toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"}); }
 
 
@@ -811,7 +839,7 @@ function renderDays(){
 }
 // Actualiza solo los resultados, sin redibujar la tabla
 function updateDayOutputs(){
-  document.getElementById("rainAlert").innerHTML=avisoLluviaHtml(days);
+  document.getElementById("rainAlert").innerHTML=avisosHtml(days);
   var z=BYID[cur], o=offs(z);
   document.querySelectorAll("#daysTbl tr[data-row]").forEach(function(tr){
     var d=days[+tr.getAttribute("data-row")]; if(!d) return;
@@ -990,6 +1018,7 @@ function renderAll(){ renderZone(); drawPoints(); renderDays(); renderWinter(); 
 
 /* ---- Pronóstico automático: el pronóstico de los días es de solo lectura: se reemplaza únicamente con el automático ---- */
 var fc=load("fc",null); if(!fc||typeof fc!=="object") fc={t:0,auto:true}; fc.t=+fc.t||0; fc.auto=true;
+var CIC=load("cic",null);           // ciclones tropicales activos (GDACS), última consulta
 var fcBusy=false;
 var fs=load("fcsky",null); if(fs&&typeof fs==="object") SKYMAP=fs;
 function guardarSky(nd){ var m={}, lim=Date.now()-30*864e5; Object.keys(SKYMAP).forEach(function(k){ if(new Date(k).getTime()>lim) m[k]=SKYMAP[k]; }); Object.keys(nd).forEach(function(k){ m[k]={c:nd[k].c,v:nd[k].v}; }); SKYMAP=m; save("fcsky",m); }
@@ -997,6 +1026,11 @@ function refreshSky(i){ var h=document.querySelector('[data-row="'+i+'"] .skyro'
 function setFcMsg(txt){ var el=document.getElementById("fcStatus"); if(!el) return;
   el.textContent = txt || (fc.auto&&fc.t ? "Pronóstico automático de Open-Meteo para Monterrey centro, actualizado el "+fcLabel(fc.t)+". Es un modelo global, no el pronóstico oficial del SMN: úsalo como referencia. Las temperaturas están corregidas por el sesgo que mostró frente a la estación (el valor original de Open-Meteo aparece debajo); la lluvia no se corrige." : "Pronóstico de ejemplo, solo ilustrativo: aún no se carga el automático. Usa «Traer pronóstico automático»."); }
 function saveDays(){ save("days",days); }
+function traerCiclones(){     // mejor esfuerzo: si falla se conserva lo guardado y no se afirma nada
+  var c3=window.AbortController?new AbortController():null, t3=setTimeout(function(){ if(c3) c3.abort(); },12000);
+  return fetch(urlCiclones(), c3?{signal:c3.signal}:{}).then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function(j){ var l=parseCiclones(j); if(l){ CIC={t:Date.now(), l:l}; save("cic",CIC); renderAll(); } }).catch(function(){}).then(function(){ clearTimeout(t3); });
+}
 function traerLluvia(){      // mejor esfuerzo: si falla, queda la lluvia del pronóstico principal
   var c2=window.AbortController?new AbortController():null, t2=setTimeout(function(){ if(c2) c2.abort(); },12000);
   return fetch(FC_URL_LLUVIA, c2?{signal:c2.signal}:{}).then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
@@ -1006,7 +1040,7 @@ function traerPronostico(){
   if(fcBusy) return; fcBusy=true; var b=document.getElementById("fcBtn"); if(b) b.disabled=true; setFcMsg("Consultando Open-Meteo…");
   var ctl=window.AbortController?new AbortController():null, to=setTimeout(function(){ if(ctl) ctl.abort(); },12000);
   fetch(FC_URL, ctl?{signal:ctl.signal}:{}).then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
-    .then(function(j){ var r=parseForecast(j,hoyISO()); if(!r) throw new Error("vacío"); guardarSky(r.cielo); days=r.dias; save("days",days); fc={t:Date.now(),auto:true}; save("fc",fc); renderAll(); setFcMsg(); return traerLluvia(); })
+    .then(function(j){ var r=parseForecast(j,hoyISO()); if(!r) throw new Error("vacío"); guardarSky(r.cielo); days=r.dias; save("days",days); fc={t:Date.now(),auto:true}; save("fc",fc); renderAll(); setFcMsg(); return traerLluvia().then(traerCiclones); })
     .catch(function(e){ setFcMsg(e&&e.message==="429" ? "Open-Meteo alcanzó su límite diario de consultas para esta red (el límite es por conexión a internet, no de la app). Se conservan los días actuales: reintenta más tarde o con datos móviles." : "No se pudo obtener el pronóstico automático (sin conexión o servicio no disponible). Se conservan los días actuales."); })
     .then(function(){ clearTimeout(to); fcBusy=false; if(b) b.disabled=false; });
 }
